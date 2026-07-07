@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 import Input, { InputProps } from "../atoms/Input";
 
+//test
 export interface FormFieldProps extends InputProps {
   label: string;
   id: string;
@@ -18,12 +19,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
         >
           {label}
         </label>
-        <Input
-          ref={ref}
-          id={id}
-          error={!!errorText}
-          {...props}
-        />
+        <Input ref={ref} id={id} error={!!errorText} {...props} />
         {errorText && (
           <span className="text-xs font-medium text-red-400 mt-1">
             {errorText}
@@ -31,7 +27,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 FormField.displayName = "FormField";
