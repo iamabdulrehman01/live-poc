@@ -26,17 +26,16 @@ export const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[#030712]/80 backdrop-blur-md border-b border-[#1e293b]/50 shadow-lg py-4"
-          : "bg-transparent py-6"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? "bg-[#030712]/80 backdrop-blur-md border-b border-[#1e293b]/50 shadow-lg py-4"
+        : "bg-transparent py-6"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Brand Logo */}
         <a href="#" className="flex items-center gap-2 group">
-          <span className="text-2xl font-extrabold font-jakarta tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300">
-            Dawdle<span className="text-[#22d3ee] font-medium">.live</span>
+          <span className="text-2xl font-jakarta tracking-tight text-white group-hover:text-[#22d3ee] transition-colors duration-300">
+            C<span className="text-[#22d3ee] font-medium">2C</span>
           </span>
         </a>
 

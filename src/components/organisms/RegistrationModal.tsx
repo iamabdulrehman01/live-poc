@@ -48,7 +48,7 @@ export const RegistrationModal: React.FC = () => {
         {/* Header Bar */}
         <div className="flex items-center justify-between p-6 border-b border-[#1e293b]/50">
           <span className="text-lg font-extrabold font-jakarta text-white">
-            Dawdle<span className="text-[#22d3ee] font-medium">.live</span>
+            Campus {" "}<span className="text-[#22d3ee] font-medium">2 Corporate</span>
           </span>
           <button
             onClick={closeModal}
@@ -93,20 +93,18 @@ export const RegistrationModal: React.FC = () => {
                       className="flex flex-col items-center z-10 bg-[#070b13] px-2"
                     >
                       <div
-                        className={`h-8 w-8 rounded-full border-2 flex items-center justify-center text-xs font-bold font-jakarta transition-all duration-500 ${
-                          isCurrent
-                            ? "bg-[#22d3ee] border-[#22d3ee] text-black shadow-[0_0_15px_rgba(64,224,244,0.4)]"
-                            : isActive
+                        className={`h-8 w-8 rounded-full border-2 flex items-center justify-center text-xs font-bold font-jakarta transition-all duration-500 ${isCurrent
+                          ? "bg-[#22d3ee] border-[#22d3ee] text-black shadow-[0_0_15px_rgba(64,224,244,0.4)]"
+                          : isActive
                             ? "bg-[#0d1323] border-[#22d3ee] text-[#22d3ee]"
                             : "bg-[#0d1323] border-[#1e293b] text-[#475569]"
-                        }`}
+                          }`}
                       >
                         {step.number}
                       </div>
                       <span
-                        className={`text-[10px] font-bold uppercase tracking-wider mt-2.5 transition-colors duration-500 hidden sm:block ${
-                          isCurrent ? "text-white" : isActive ? "text-[#94a3b8]" : "text-[#475569]"
-                        }`}
+                        className={`text-[10px] font-bold uppercase tracking-wider mt-2.5 transition-colors duration-500 hidden sm:block ${isCurrent ? "text-white" : isActive ? "text-[#94a3b8]" : "text-[#475569]"
+                          }`}
                       >
                         {step.title}
                       </span>
@@ -200,21 +198,19 @@ export const RegistrationModal: React.FC = () => {
                             key={prog.id}
                             type="button"
                             onClick={() => updateFormField("selectedProgram", prog.id)}
-                            className={`flex items-center justify-between p-5 rounded-2xl border text-left transition-all duration-300 cursor-pointer ${
-                              isSelected
-                                ? prog.color === "cyan"
-                                  ? "bg-[#06b6d4]/5 border-[#22d3ee] shadow-[0_0_15px_rgba(64,224,244,0.05)]"
-                                  : prog.color === "purple"
+                            className={`flex items-center justify-between p-5 rounded-2xl border text-left transition-all duration-300 cursor-pointer ${isSelected
+                              ? prog.color === "cyan"
+                                ? "bg-[#06b6d4]/5 border-[#22d3ee] shadow-[0_0_15px_rgba(64,224,244,0.05)]"
+                                : prog.color === "purple"
                                   ? "bg-[#a855f7]/5 border-[#c084fc] shadow-[0_0_15px_rgba(168,85,247,0.05)]"
                                   : "bg-[#2dd4bf]/5 border-[#2dd4bf] shadow-[0_0_15px_rgba(45,212,191,0.05)]"
-                                : "bg-[#0d1323]/40 border-[#1e293b] hover:border-slate-700/80"
-                            }`}
+                              : "bg-[#0d1323]/40 border-[#1e293b] hover:border-slate-700/80"
+                              }`}
                           >
                             <div className="flex items-center gap-4">
                               <div
-                                className={`p-3 rounded-xl bg-[#030712] border ${
-                                  isSelected ? "border-[#22d3ee]/20" : "border-[#1e293b]"
-                                }`}
+                                className={`p-3 rounded-xl bg-[#030712] border ${isSelected ? "border-[#22d3ee]/20" : "border-[#1e293b]"
+                                  }`}
                               >
                                 <Icon
                                   size={20}
@@ -223,8 +219,8 @@ export const RegistrationModal: React.FC = () => {
                                       ? prog.color === "cyan"
                                         ? "text-[#22d3ee]"
                                         : prog.color === "purple"
-                                        ? "text-[#c084fc]"
-                                        : "text-[#2dd4bf]"
+                                          ? "text-[#c084fc]"
+                                          : "text-[#2dd4bf]"
                                       : "text-[#64748b]"
                                   }
                                 />
@@ -235,15 +231,14 @@ export const RegistrationModal: React.FC = () => {
                               </div>
                             </div>
                             <div
-                              className={`h-5 w-5 rounded-full border flex items-center justify-center transition-all ${
-                                isSelected
-                                  ? prog.color === "cyan"
-                                    ? "border-[#22d3ee] bg-[#22d3ee]"
-                                    : prog.color === "purple"
+                              className={`h-5 w-5 rounded-full border flex items-center justify-center transition-all ${isSelected
+                                ? prog.color === "cyan"
+                                  ? "border-[#22d3ee] bg-[#22d3ee]"
+                                  : prog.color === "purple"
                                     ? "border-[#c084fc] bg-[#c084fc]"
                                     : "border-[#2dd4bf] bg-[#2dd4bf]"
-                                  : "border-[#334155]"
-                              }`}
+                                : "border-[#334155]"
+                                }`}
                             >
                               {isSelected && <span className="h-2 w-2 rounded-full bg-black" />}
                             </div>
@@ -351,7 +346,7 @@ export const RegistrationModal: React.FC = () => {
                 Registration Received!
               </h2>
               <p className="text-sm text-[#94a3b8] leading-relaxed mt-4">
-                Thank you for applying to Dawdle.live. We have saved your registration parameters. An expert advisor will reach out to <span className="text-[#22d3ee] font-semibold">{formData.email}</span> shortly.
+                Thank you for applying to Campus to Corporate. We have saved your registration parameters. An expert advisor will reach out to <span className="text-[#22d3ee] font-semibold">{formData.email}</span> shortly.
               </p>
               <Button variant="secondary" onClick={closeModal} className="mt-10 px-8 py-3 font-semibold text-sm">
                 Close Window

@@ -28,13 +28,13 @@ export default function Home() {
         <ProgramsSection />
 
         {/* Company Services */}
-        <ServicesSection />
+        {/* <ServicesSection /> */}
 
         {/* Vision & Founders info */}
         <WhoWeAre />
 
         {/* Student Testimonials */}
-        <SuccessStories />
+        {/* <SuccessStories /> */}
 
         {/* Call To Action banner */}
         <CTASection />

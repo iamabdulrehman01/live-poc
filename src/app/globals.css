@@ -32,6 +32,21 @@ body {
   background: linear-gradient(180deg, #06b6d4, #a855f7);
 }
 
+/* Thin Scrollbar for Cards */
+.card-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.card-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.card-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.3);
+  border-radius: 2px;
+}
+.card-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.6);
+}
+
 /* Dynamic Radial Glow Backgrounds (Color Mesh blobs) */
 .mesh-blob-cyan {
   background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
@@ -139,6 +154,21 @@ body {
 
   .animate-float {
     animation: float 6s ease-in-out infinite;
+  }
+
+  /* 3D Flip Card Utilities */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
   }
 }
 

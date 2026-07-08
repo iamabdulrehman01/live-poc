@@ -2,7 +2,7 @@ import React from "react";
 
 export interface BadgeProps {
   children: React.ReactNode;
-  variant?: "default" | "cyan" | "purple" | "outline";
+  variant?: "default" | "cyan" | "purple" | "outline" | "glass" | "solid" | "subtle";
   className?: string;
 }
 
@@ -19,6 +19,9 @@ export const Badge: React.FC<BadgeProps> = ({
     cyan: "bg-[#06b6d4]/10 text-[#22d3ee] border border-[#22d3ee]/20",
     purple: "bg-[#a855f7]/10 text-[#c084fc] border border-[#c084fc]/20",
     outline: "bg-transparent text-[#e2e8f0] border border-[#475569]",
+    glass: "glass px-4 py-1.5 text-white/80",
+    solid: "bg-accent-500 text-white px-3 py-1",
+    subtle: "text-brand-400 uppercase tracking-[0.2em] font-medium text-xs",
   };
 
   return (

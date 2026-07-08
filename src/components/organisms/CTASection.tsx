@@ -4,6 +4,7 @@ import React from "react";
 import Button from "../atoms/Button";
 import Heading from "../atoms/Heading";
 import { useStore } from "@/store/useStore";
+import { ArrowRight } from "lucide-react";
 
 export const CTASection: React.FC = () => {
   const openModal = useStore((state) => state.openModal);
@@ -30,20 +31,13 @@ export const CTASection: React.FC = () => {
           {/* Buttons Layout */}
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto z-10">
             <Button
-              variant="glow-teal"
+              variant="outline"
               size="md"
               onClick={() => openModal()}
-              className="px-8 font-bold text-sm tracking-wide"
+              className="pl-8 pr-6 font-bold text-sm tracking-wide flex gap-2"
             >
-              Enroll Now
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={() => openModal()}
-              className="px-8 border-[#1e293b] text-[#f1f5f9] font-bold text-sm tracking-wide"
-            >
-              Talk to an Expert
+              <p>Enroll Now  to connect with our Expert</p>
+              <ArrowRight size={18} />
             </Button>
           </div>
         </div>

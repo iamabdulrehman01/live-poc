@@ -15,7 +15,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Dawdle.live - Bridge the Gap from Campus to Corporate",
+  title: "Campus to Corporate - Bridge the Gap from Campus 2 Corporate",
   description: "Expert-led Internship, Workshop, and Mentorship programs designed to launch your tech career with confidence and corporate-ready skills.",
   keywords: ["internship", "tech workshop", "career mentorship", "campus to corporate", "SDE coding", "React Next.js portfolio"],
 };

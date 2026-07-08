@@ -4,6 +4,9 @@ import React from "react";
 import { Share2, Globe, Linkedin, Twitter } from "lucide-react";
 
 export const Footer: React.FC = () => {
+
+  let currentYear = new Date().getFullYear();
+
   return (
     <footer className="relative bg-[#060a12] border-t border-[#1e293b]/50 pt-16 pb-12 overflow-hidden">
       {/* Footer Grid */}
@@ -11,7 +14,7 @@ export const Footer: React.FC = () => {
         {/* Brand Column */}
         <div className="md:col-span-5 flex flex-col items-start">
           <span className="text-xl font-extrabold font-jakarta tracking-tight text-white mb-4">
-            Dawdle<span className="text-[#22d3ee] font-medium">.live</span>
+            Campus {" "}<span className="text-[#22d3ee] font-medium">2 Corporate</span>
           </span>
           <p className="text-sm text-[#64748b] leading-relaxed max-w-sm font-medium">
             Bridging the gap between students and the corporate world through intensive, industry-aligned learning paths.
@@ -86,7 +89,7 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-[#1e293b]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Copyright */}
         <p className="text-xs text-[#475569] font-medium text-center sm:text-left">
-          &copy; 2024 Dawdle.live by Rishikesh Gupta (CEO & Founder)
+          &copy; {currentYear} Campus to Corporate by Abhishek Kumar (CEO & Founder)
         </p>
 
         {/* Live Indicator Status */}

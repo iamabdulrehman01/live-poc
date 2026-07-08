@@ -27,7 +27,7 @@ export const HeroSection: React.FC = () => {
             {/* Neon label tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-950/50 border border-[#22d3ee]/40 text-[#22d3ee] text-xs font-bold uppercase tracking-wider mb-6 animate-pulse shadow-[0_0_15px_rgba(34,211,238,0.25)]">
               <Sparkles size={14} className="text-[#22d3ee]" />
-              <span>Bridging the Talent Gap</span>
+              <span>Bridging the Talent Gap for 200+ Students</span>
             </div>
 
             {/* Main Headline */}
@@ -73,13 +73,13 @@ export const HeroSection: React.FC = () => {
               {/* Internal image layout */}
               <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#030712]">
                 <img
-                  src="/images/hero-collaboration.jpg"
+                  src="/images/hero-collaboration.jpeg"
                   alt="Students Collaborating"
                   className="w-full h-full object-cover opacity-90"
                 />
-                
+
                 {/* Floating Tag Overlay */}
-                <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-[#090d16]/90 border border-cyan-500/20 backdrop-blur-md flex items-center justify-between">
+                {/* <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-[#090d16]/90 border border-cyan-500/20 backdrop-blur-md flex items-center justify-between">
                   <div>
                     <span className="text-[10px] text-cyan-400 font-extrabold uppercase tracking-wider">Active Cohort</span>
                     <h4 className="text-sm font-extrabold text-white mt-0.5">Career Growth</h4>
@@ -87,7 +87,7 @@ export const HeroSection: React.FC = () => {
                   <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 text-black">
                     <Play size={12} fill="black" className="ml-0.5" />
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -108,9 +108,8 @@ export const HeroSection: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className={`flex flex-col items-center justify-center ${
-                    idx === 4 ? "col-span-2 md:col-span-1" : ""
-                  }`}
+                  className={`flex flex-col items-center justify-center ${idx === 4 ? "col-span-2 md:col-span-1" : ""
+                    }`}
                 >
                   <StatItem
                     value={stat.value}

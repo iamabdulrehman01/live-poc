@@ -47,18 +47,18 @@ export const navLinks: NavLink[] = [
 // Highlight statistics for dashboard grid (Figma Image 1/3)
 export const dashboardStats: StatItem[] = [
   { value: "10k+", label: "ACTIVE STUDENTS", category: "students" },
-  { value: "95%", label: "PLACEMENT RATE", category: "placement" },
-  { value: "200+", label: "TOP MENTORS", category: "mentors" },
-  { value: "50+", label: "LIVE WORKSHOPS", category: "workshops" },
+  { value: "95%", label: "STUDENT SUCCESS RATE", category: "placement" },
+  { value: "10+", label: "TOP MENTORS", category: "mentors" },
+  { value: "20+", label: "LIVE WORKSHOPS", category: "workshops" },
 ];
 
 // Inline horizontal row statistics (Figma Image 5)
 export const horizontalStats: StatItem[] = [
   { value: "200+", label: "STUDENTS TRAINED" },
   { value: "300+", label: "MOCK INTERVIEWS" },
-  { value: "5+", label: "UNI PARTNERS" },
+  { value: "5+", label: "UNIVERSITY PARTNERS" },
   { value: "20+", label: "WORKSHOPS" },
-  { value: "4.9★", label: "STUDENT RATING" },
+  { value: "4.9/5", label: "STUDENT RATING" },
 ];
 
 // Service offerings data (Figma Image 1/3)
@@ -137,7 +137,7 @@ export const testimonialsData: TestimonialItem[] = [
   {
     id: "testimonial-aryaa",
     quote:
-      "Dawdle.live didn't just teach me how to code: they taught me how to survive and thrive in a high-growth startup environment. The mentorship was a game-changer.",
+      "Campus to Corporate didn't just teach me how to code: they taught me how to survive and thrive in a high-growth startup environment. The mentorship was a game-changer.",
     author: "Aryaa Sharma",
     role: "SDE",
     company: "Oracle",
@@ -146,7 +146,7 @@ export const testimonialsData: TestimonialItem[] = [
   {
     id: "testimonial-aaryan",
     quote:
-      "The internship program at Dawdle.live gave me the technical skills and confidence to land my first role.",
+      "The internship program at Campus to Corporate gave me the technical skills and confidence to land my first role.",
     author: "Aaryan K.",
     role: "Tech Lead",
     company: "Dawdle Alumni",
@@ -178,6 +178,6 @@ export const registrationSteps: RegistrationStep[] = [
 export const founderInfo = {
   name: "Rishikesh Gupta",
   role: "CEO & Founder",
-  bio: "Dawdle.live is a dedicated C2C (Campus to Corporate) platform committed to empowering students and young professionals. Our mission is to bridge the educational gap by providing practical, industry-aligned training that turns academic knowledge into corporate performance.\n\nFounded on the principle of 'Informed Momentum,' we combine established institutional stability with the agility of high-tech startups.",
+  bio: "Campus to Corporate is a dedicated C2C (Campus to Corporate) platform committed to empowering students and young professionals. Our mission is to bridge the educational gap by providing practical, industry-aligned training that turns academic knowledge into corporate performance.\n\nFounded on the principle of 'Informed Momentum,' we combine established institutional stability with the agility of high-tech startups.",
   avatarUrl: "/images/founder.jpg",
 };
