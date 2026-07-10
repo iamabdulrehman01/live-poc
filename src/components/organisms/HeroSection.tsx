@@ -12,26 +12,34 @@ export const HeroSection: React.FC = () => {
   const openModal = useStore((state) => state.openModal);
 
   return (
-    <section id="home" className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-grid-pattern">
+    <section
+      id="home"
+      className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-grid-pattern"
+    >
       {/* Absolute Ambient Background Lights (Vibrant Mesh Blobs) */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full mesh-blob-cyan pointer-events-none" />
       <div className="absolute top-1/3 right-10 w-[500px] h-[500px] rounded-full mesh-blob-purple pointer-events-none" />
       <div className="absolute bottom-10 left-1/3 w-[450px] h-[450px] rounded-full mesh-blob-emerald pointer-events-none" />
       <div className="absolute top-10 right-1/4 w-[400px] h-[400px] rounded-full mesh-blob-amber pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto pr-6 pl-4 sm:pl-10">
         {/* Main Grid: Left copy, Right graphic */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             {/* Neon label tag */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-950/50 border border-[#22d3ee]/40 text-[#22d3ee] text-xs font-bold uppercase tracking-wider mb-6 animate-pulse shadow-[0_0_15px_rgba(34,211,238,0.25)]">
-              <Sparkles size={14} className="text-[#22d3ee]" />
-              <span>Bridging the Talent Gap for 200+ Students</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full animate-pulse bg-orange-300/10 border border-[#22d3ee]/40 text-xs font-bold uppercase tracking-wider mb-6 shadow-[0_0_15px_rgba(34,211,238,0.25)]">
+              <Sparkles size={14} className="text-[rgb(255,122,41)] " />
+              <span className="text-white font-mono">
+                Bridging the Talent Gap
+              </span>
             </div>
 
             {/* Main Headline */}
-            <Heading level={1} className="mb-6 font-extrabold tracking-tight leading-tight">
+            <Heading
+              level={1}
+              className="mb-6 font-extrabold tracking-tight leading-tight"
+            >
               Bridge the Gap from <br />
               <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_4px_12px_rgba(6,182,212,0.15)]">
                 Campus to Corporate.
@@ -40,30 +48,32 @@ export const HeroSection: React.FC = () => {
 
             {/* Description */}
             <p className="text-base md:text-lg text-[#cbd5e1] leading-relaxed max-w-xl mb-10 font-semibold">
-              Expert-led Internship, Workshop, and Mentorship programs designed to launch your tech career with confidence and corporate-ready skills.
+              Expert-led Internship, Workshop, and Mentorship programs designed
+              to launch your tech career with confidence and corporate-ready
+              skills.
             </p>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto z-10">
-              <Button
-                variant="glow-teal"
-                size="lg"
-                onClick={() => openModal()}
-                className="flex items-center justify-center gap-2 text-black font-extrabold"
-              >
-                <span>Get Started</span>
-                <ArrowRight size={18} />
-              </Button>
-              <a href="#services" className="w-full sm:w-auto">
+            {/* <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto z-10">
                 <Button
-                  variant="secondary"
+                  variant="glow-teal"
                   size="lg"
-                  className="w-full flex items-center justify-center gap-2 font-bold text-white border-slate-700 bg-slate-900/60"
+                  onClick={() => openModal()}
+                  className="flex items-center justify-center gap-2 text-black font-extrabold"
                 >
-                  <span>Explore Programs</span>
+                  <span>Get Started</span>
+                  <ArrowRight size={18} />
                 </Button>
-              </a>
-            </div>
+                <a href="#services" className="w-full sm:w-auto">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="w-full flex items-center justify-center gap-2 font-bold text-white border-slate-700 bg-slate-900/60"
+                  >
+                    <span>Explore Programs</span>
+                  </Button>
+                </a>
+              </div> */}
           </div>
 
           {/* Right Column: Hero Banner Image Frame */}
@@ -103,13 +113,14 @@ export const HeroSection: React.FC = () => {
                 "bg-gradient-to-r from-white to-[#c084fc]",
                 "bg-gradient-to-r from-white to-[#34d399]",
                 "bg-gradient-to-r from-white to-[#fbbf24]",
-                "bg-gradient-to-r from-[#22d3ee] to-[#c084fc]"
+                "bg-gradient-to-r from-[#22d3ee] to-[#c084fc]",
               ];
               return (
                 <div
                   key={idx}
-                  className={`flex flex-col items-center justify-center ${idx === 4 ? "col-span-2 md:col-span-1" : ""
-                    }`}
+                  className={`flex flex-col items-center justify-center ${
+                    idx === 4 ? "col-span-2 md:col-span-1" : ""
+                  }`}
                 >
                   <StatItem
                     value={stat.value}

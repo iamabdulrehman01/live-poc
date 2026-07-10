@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617; /* Slate 950 */
-  --foreground: #f8fafc; /* Slate 50 */
-  --card-bg: rgba(15, 23, 42, 0.6); /* Semi-transparent slate card */
+  --background: #020617;
+  /* Slate 950 */
+  --foreground: #f8fafc;
+  /* Slate 50 */
+  --card-bg: rgba(15, 23, 42, 0.6);
+  /* Semi-transparent slate card */
   --font-outfit: var(--font-outfit), sans-serif;
   --font-jakarta: var(--font-jakarta), sans-serif;
 }
@@ -20,14 +23,17 @@ body {
 ::-webkit-scrollbar {
   width: 10px;
 }
+
 ::-webkit-scrollbar-track {
   background: #020617;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 6px;
   border: 2px solid #020617;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #06b6d4, #a855f7);
 }
@@ -36,13 +42,16 @@ body {
 .card-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
+
 .card-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .card-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(168, 85, 247, 0.3);
   border-radius: 2px;
 }
+
 .card-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(168, 85, 247, 0.6);
 }
@@ -51,12 +60,15 @@ body {
 .mesh-blob-cyan {
   background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
 }
+
 .mesh-blob-purple {
   background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
 }
+
 .mesh-blob-emerald {
   background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
 }
+
 .mesh-blob-amber {
   background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
 }
@@ -76,6 +88,7 @@ body {
     border: 1px solid rgba(6, 182, 212, 0.25);
     box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.15);
   }
+
   .card-glow-cyan:hover {
     box-shadow: 0 15px 40px -5px rgba(6, 182, 212, 0.35);
     border-color: rgba(6, 182, 212, 0.5);
@@ -86,6 +99,7 @@ body {
     border: 1px solid rgba(168, 85, 247, 0.25);
     box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.15);
   }
+
   .card-glow-purple:hover {
     box-shadow: 0 15px 40px -5px rgba(168, 85, 247, 0.35);
     border-color: rgba(168, 85, 247, 0.5);
@@ -96,6 +110,7 @@ body {
     border: 1px solid rgba(16, 185, 129, 0.25);
     box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.15);
   }
+
   .card-glow-emerald:hover {
     box-shadow: 0 15px 40px -5px rgba(16, 185, 129, 0.35);
     border-color: rgba(16, 185, 129, 0.5);
@@ -106,6 +121,7 @@ body {
     border: 1px solid rgba(245, 158, 11, 0.25);
     box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.1);
   }
+
   .card-glow-amber:hover {
     box-shadow: 0 15px 40px -5px rgba(245, 158, 11, 0.25);
     border-color: rgba(245, 158, 11, 0.4);
@@ -117,6 +133,7 @@ body {
     box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
     color: #020617;
   }
+
   .btn-gradient-cyan:hover {
     background: linear-gradient(135deg, #22d3ee 0%, #34d399 100%);
     box-shadow: 0 6px 28px rgba(6, 182, 212, 0.5);
@@ -128,6 +145,7 @@ body {
     box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
     color: #ffffff;
   }
+
   .btn-gradient-purple:hover {
     background: linear-gradient(135deg, #c084fc 0%, #f472b6 100%);
     box-shadow: 0 6px 28px rgba(168, 85, 247, 0.5);
@@ -139,6 +157,7 @@ body {
     box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
     color: #020617;
   }
+
   .btn-gradient-amber:hover {
     background: linear-gradient(135deg, #fbbf24 0%, #f87171 100%);
     box-shadow: 0 6px 28px rgba(245, 158, 11, 0.5);
@@ -147,9 +166,9 @@ body {
 
   .bg-grid-pattern {
     background-size: 50px 50px;
-    background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   }
 
   .animate-float {
@@ -160,13 +179,16 @@ body {
   .perspective-1000 {
     perspective: 1000px;
   }
+
   .transform-style-3d {
     transform-style: preserve-3d;
   }
+
   .backface-hidden {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
   }
+
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
@@ -177,9 +199,11 @@ body {
   0% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-12px);
   }
+
   100% {
     transform: translateY(0px);
   }
@@ -189,6 +213,7 @@ body {
   padding-top: 5rem;
   padding-bottom: 5rem;
 }
+
 @media (min-width: 768px) {
   .section-padding {
     padding-top: 8rem;

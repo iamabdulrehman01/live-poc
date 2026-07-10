@@ -46,9 +46,9 @@ export const navLinks: NavLink[] = [
 
 // Highlight statistics for dashboard grid (Figma Image 1/3)
 export const dashboardStats: StatItem[] = [
-  { value: "10k+", label: "ACTIVE STUDENTS", category: "students" },
+  { value: "500+", label: "ACTIVE STUDENTS", category: "students" },
   { value: "95%", label: "STUDENT SUCCESS RATE", category: "placement" },
-  { value: "10+", label: "TOP MENTORS", category: "mentors" },
+  { value: "10+", label: "TOP INDUSTRY MENTORS", category: "mentors" },
   { value: "20+", label: "LIVE WORKSHOPS", category: "workshops" },
 ];
 
@@ -100,7 +100,7 @@ export const programsData: ProgramItem[] = [
     title: "Internship",
     description:
       "Gain real-world experience working on live industry-standard projects.",
-    details: ["Summer (8 weeks)", "Final Year (6 weeks)"],
+    details: ["Summer (4 weeks)", "Final Year (8 weeks)"],
     actionText: "Learn More",
     theme: "cyan",
   },
@@ -115,7 +115,7 @@ export const programsData: ProgramItem[] = [
       "Frontend",
       "Cloud/AWS/GCP/Azure",
       "DB",
-      "AI / Agents AI",
+      "AI / Agentic AI",
     ],
     actionText: "View Curriculum",
     theme: "purple",
