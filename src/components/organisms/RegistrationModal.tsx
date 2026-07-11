@@ -334,9 +334,12 @@ export const RegistrationModal: React.FC = () => {
                       label="Phone Number"
                       id="phone"
                       type="tel"
-                      placeholder="+1 (555) 000-0000"
+                      placeholder="9876543210"
                       value={formData.phone}
-                      onChange={(e) => updateFormField("phone", e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                        updateFormField("phone", val);
+                      }}
                       onBlur={() => validateField("phone")}
                       errorText={formErrors.phone}
                     />
