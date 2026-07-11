@@ -10,6 +10,9 @@ export interface Order {
   phone: string;
   selectedProgram: string;
   collegeName: string;
+  universityName: string;
+  batchSize?: string;
+  excelFileName?: string;
   notes: string;
   amount: number;
   paymentStatus: "pending" | "success" | "failed";

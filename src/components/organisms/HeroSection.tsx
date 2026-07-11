@@ -77,7 +77,7 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Right Column: Hero Banner Image Frame */}
-          <div className="lg:col-span-5 relative w-full flex justify-center">
+          <div className="lg:col-span-5 relative w-[60%] flex justify-center">
             {/* Glassmorphic border container */}
             <div className="relative w-full max-w-md aspect-[4/3] rounded-3xl p-3 bg-gradient-to-tr from-[#22d3ee]/25 via-transparent to-[#a855f7]/25 border border-white/10 backdrop-blur-md shadow-2xl animate-float">
               {/* Internal image layout */}
@@ -118,9 +118,8 @@ export const HeroSection: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className={`flex flex-col items-center justify-center ${
-                    idx === 4 ? "col-span-2 md:col-span-1" : ""
-                  }`}
+                  className={`flex flex-col items-center justify-center ${idx === 4 ? "col-span-2 md:col-span-1" : ""
+                    }`}
                 >
                   <StatItem
                     value={stat.value}
