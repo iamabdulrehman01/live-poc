@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Share2, Globe, Linkedin, Twitter } from "lucide-react";
 
 export const Footer: React.FC = () => {
@@ -46,16 +47,34 @@ export const Footer: React.FC = () => {
             Company
           </h4>
           <ul className="flex flex-col gap-3">
-            {["Contact", "Privacy Policy", "Terms of Service"].map((item) => (
-              <li key={item}>
-                <a
-                  href="#"
-                  className="text-sm text-[#64748b] hover:text-[#22d3ee] transition-colors duration-300 font-semibold"
-                >
-                  {item}
-                </a>
-              </li>
-            ))}
+            <li>
+              <a
+                href="mailto:abdul.rehmn@coforge.com"
+                onClick={(e) => {
+                  navigator.clipboard.writeText("abdul.rehmn@coforge.com");
+                  alert("Opening mail composer to connect with us! (Support email address copied to clipboard: abdul.rehmn@coforge.com)");
+                }}
+                className="text-sm text-[#64748b] hover:text-[#22d3ee] transition-colors duration-300 font-semibold"
+              >
+                Contact us
+              </a>
+            </li>
+            <li>
+              <Link
+                href="/privacy"
+                className="text-sm text-[#64748b] hover:text-[#22d3ee] transition-colors duration-300 font-semibold"
+              >
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/terms"
+                className="text-sm text-[#64748b] hover:text-[#22d3ee] transition-colors duration-300 font-semibold"
+              >
+                Terms of Service
+              </Link>
+            </li>
           </ul>
         </div>
 
