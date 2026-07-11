@@ -5,10 +5,12 @@ export interface FormData {
   email: string;
   phone: string;
   selectedProgram: string;
-  userType: "student" | "university" | "";
+  userType: "student" | "university" | "mentorship" | "";
   internshipType: "summer" | "final" | "";
   focusArea: string;
+  universityName: string;
   collegeName: string;
+  batchSize: "25" | "50" | "75" | "100" | "";
   notes: string;
 }
 
@@ -20,7 +22,9 @@ export interface FormErrors {
   userType?: string;
   internshipType?: string;
   focusArea?: string;
+  universityName?: string;
   collegeName?: string;
+  batchSize?: string;
 }
 
 interface AppState {
@@ -54,7 +58,9 @@ const initialFormData: FormData = {
   userType: "",
   internshipType: "",
   focusArea: "",
+  universityName: "",
   collegeName: "",
+  batchSize: "",
   notes: "",
 };
 
@@ -66,13 +72,28 @@ export const useStore = create<AppState>((set, get) => ({
   isSubmitted: false,
 
   openModal: (defaultProgram) => {
+    let userType: "student" | "university" | "mentorship" | "" = "";
+    let selectedProgram = defaultProgram || "";
+
+    if (defaultProgram === "internship") {
+      userType = "student";
+      selectedProgram = "";
+    } else if (defaultProgram === "workshop") {
+      userType = "university";
+      selectedProgram = "University Workshop";
+    } else if (defaultProgram === "mentorship") {
+      userType = "mentorship";
+      selectedProgram = "1-on-1 Mentorship";
+    }
+
     set({
       isModalOpen: true,
       currentStep: 1,
       isSubmitted: false,
       formData: {
         ...initialFormData,
-        selectedProgram: defaultProgram || "",
+        userType,
+        selectedProgram,
       },
       formErrors: {},
     });
@@ -105,7 +126,11 @@ export const useStore = create<AppState>((set, get) => ({
         selectedProgram = [internText, focusText].filter(Boolean).join(" - ");
       } else if (nextFormData.userType === "university") {
         const focusText = nextFormData.focusArea ? nextFormData.focusArea : "";
-        selectedProgram = ["University Workshop", focusText].filter(Boolean).join(" - ");
+        const batchText = nextFormData.batchSize ? `${nextFormData.batchSize} Students` : "";
+        selectedProgram = ["University Workshop", focusText, batchText].filter(Boolean).join(" - ");
+      } else if (nextFormData.userType === "mentorship") {
+        const focusText = nextFormData.focusArea ? nextFormData.focusArea : "";
+        selectedProgram = ["1-on-1 Mentorship", focusText].filter(Boolean).join(" - ");
       }
 
       return {
@@ -166,7 +191,7 @@ export const useStore = create<AppState>((set, get) => ({
 
     if (field === "userType") {
       if (!formData.userType) {
-        errors.userType = "Please select whether you are a Student or College Coordinator";
+        errors.userType = "Please select whether you are a Student, College Coordinator, or seeking Mentorship";
         isValid = false;
       } else {
         errors.userType = undefined;
@@ -191,12 +216,30 @@ export const useStore = create<AppState>((set, get) => ({
       }
     }
 
+    if (field === "universityName") {
+      if (!formData.universityName.trim()) {
+        errors.universityName = "University name is required";
+        isValid = false;
+      } else {
+        errors.universityName = undefined;
+      }
+    }
+
     if (field === "collegeName") {
       if (!formData.collegeName.trim()) {
-        errors.collegeName = "College / University name is required";
+        errors.collegeName = "College name is required";
         isValid = false;
       } else {
         errors.collegeName = undefined;
+      }
+    }
+
+    if (field === "batchSize") {
+      if (formData.userType === "university" && !formData.batchSize) {
+        errors.batchSize = "Please select a batch size";
+        isValid = false;
+      } else {
+        errors.batchSize = undefined;
       }
     }
 
@@ -217,8 +260,10 @@ export const useStore = create<AppState>((set, get) => ({
       const isUserTypeValid = validateField("userType");
       const isInternshipValid = formData.userType === "student" ? validateField("internshipType") : true;
       const isFocusAreaValid = validateField("focusArea");
+      const isBatchSizeValid = formData.userType === "university" ? validateField("batchSize") : true;
+      const isUniversityValid = validateField("universityName");
       const isCollegeValid = validateField("collegeName");
-      isValid = isUserTypeValid && isInternshipValid && isFocusAreaValid && isCollegeValid;
+      isValid = isUserTypeValid && isInternshipValid && isFocusAreaValid && isBatchSizeValid && isUniversityValid && isCollegeValid;
     }
 
     return isValid;

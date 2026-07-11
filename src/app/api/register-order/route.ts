@@ -5,9 +5,9 @@ import nodemailer from "nodemailer";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, email, phone, selectedProgram, collegeName, notes, amount } = body;
+    const { fullName, email, phone, selectedProgram, collegeName, universityName, batchSize, excelFileName, notes, amount } = body;
 
-    if (!fullName || !email || !phone || !selectedProgram || !collegeName) {
+    if (!fullName || !email || !phone || !selectedProgram || !collegeName || !universityName) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -19,6 +19,9 @@ export async function POST(request: Request) {
       phone,
       selectedProgram,
       collegeName,
+      universityName,
+      batchSize: batchSize || "",
+      excelFileName: excelFileName || "",
       notes: notes || "",
       amount: Number(amount) || 4999,
       paymentStatus: "pending",
@@ -41,7 +44,14 @@ export async function POST(request: Request) {
     console.log(`Order ID:       ${orderId}`);
     console.log(`Student:        ${fullName} (${email}, ${phone})`);
     console.log(`Program:        ${selectedProgram}`);
+    console.log(`University:     ${universityName}`);
     console.log(`College:        ${collegeName}`);
+    if (batchSize) {
+      console.log(`Batch Size:     ${batchSize} Students`);
+    }
+    if (excelFileName) {
+      console.log(`Excel File:     ${excelFileName}`);
+    }
     console.log(`Amount:         ₹${newOrder.amount}`);
     console.log(`\nCEO Mail Link Simulator (Click to update payment status):`);
     console.log(`✅ [YES, RECEIVED]:  ${approveUrl}`);
@@ -92,12 +102,28 @@ export async function POST(request: Request) {
                   <td style="padding: 12px; border: 1px solid #1e293b; color: #ffffff;">${selectedProgram}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 12px; font-weight: bold; border: 1px solid #1e293b; color: #94a3b8;">College/University</td>
-                  <td style="padding: 12px; border: 1px solid #1e293b; color: #ffffff;">${collegeName}</td>
+                  <td style="padding: 12px; font-weight: bold; border: 1px solid #1e293b; color: #94a3b8;">University</td>
+                  <td style="padding: 12px; border: 1px solid #1e293b; color: #ffffff;">${universityName}</td>
                 </tr>
                 <tr style="background-color: #111827;">
+                  <td style="padding: 12px; font-weight: bold; border: 1px solid #1e293b; color: #94a3b8;">College</td>
+                  <td style="padding: 12px; border: 1px solid #1e293b; color: #ffffff;">${collegeName}</td>
+                </tr>
+                ${batchSize ? `
+                <tr>
+                  <td style="padding: 12px; font-weight: bold; border: 1px solid #1e293b; color: #94a3b8;">Batch Size</td>
+                  <td style="padding: 12px; border: 1px solid #1e293b; color: #ffffff;">${batchSize} Students</td>
+                </tr>
+                ` : ""}
+                ${excelFileName ? `
+                <tr style="background-color: #111827;">
+                  <td style="padding: 12px; font-weight: bold; border: 1px solid #1e293b; color: #94a3b8;">Uploaded Batch</td>
+                  <td style="padding: 12px; border: 1px solid #1e293b; color: #ffffff;">${excelFileName}</td>
+                </tr>
+                ` : ""}
+                <tr style="background-color: #111827;">
                   <td style="padding: 12px; font-weight: bold; border: 1px solid #1e293b; color: #94a3b8;">Amount</td>
-                  <td style="padding: 12px; font-weight: bold; color: #22d3ee; border: 1px solid #1e293b; font-size: 16px;">₹${newOrder.amount}</td>
+                  <td style="padding: 12px; font-weight: bold; color: #22d3ee; border: 1px solid #1e293b; font-size: 16px;">₹${newOrder.amount.toLocaleString("en-IN")}</td>
                 </tr>
               </table>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, CheckCircle, ArrowRight, ArrowLeft, Loader2, Award, Briefcase, Laptop, GraduationCap, School } from "lucide-react";
+import { X, CheckCircle, ArrowRight, ArrowLeft, Loader2, Award, Briefcase, Laptop, GraduationCap, School, FileSpreadsheet } from "lucide-react";
 import Button from "../atoms/Button";
 import FormField from "../molecules/FormField";
 import { useStore } from "@/store/useStore";
@@ -33,6 +33,8 @@ export const RegistrationModal: React.FC = () => {
   const [paymentStatus, setPaymentStatus] = useState<"pending" | "success" | "failed">("pending");
   const [approveUrl, setApproveUrl] = useState<string>("");
   const [rejectUrl, setRejectUrl] = useState<string>("");
+  const [uploadedFileName, setUploadedFileName] = useState<string>("");
+  const [excelError, setExcelError] = useState<string>("");
 
   // Local fallback list of top universities in case public API fails or has no match
   const LOCAL_FALLBACK_UNIVERSITIES = [
@@ -59,12 +61,12 @@ export const RegistrationModal: React.FC = () => {
     "Jawaharlal Nehru University (JNU)"
   ];
 
-  // Initialize search input with initial collegeName from store
+  // Initialize search input with initial universityName from store
   useEffect(() => {
-    if (formData.collegeName) {
-      setCollegeSearch(formData.collegeName);
+    if (formData.universityName) {
+      setCollegeSearch(formData.universityName);
     }
-  }, [formData.collegeName]);
+  }, [formData.universityName]);
 
   // Handle university API search with debounce
   useEffect(() => {
@@ -112,12 +114,27 @@ export const RegistrationModal: React.FC = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [collegeSearch]);
 
+  // Reset uploaded file states when modal is closed
+  useEffect(() => {
+    if (!isModalOpen) {
+      setUploadedFileName("");
+      setExcelError("");
+    }
+  }, [isModalOpen]);
+
   // Local price mapper based on student vs college coordinator selections
   const getProgramPrice = () => {
     if (formData.userType === "student") {
-      return formData.internshipType === "summer" ? 4999 : 8999;
+      return formData.internshipType === "summer" ? 3999 : 7999;
     }
-    return 1999; // University / College Workshop
+    if (formData.userType === "mentorship") {
+      return 1999;
+    }
+    if (formData.userType === "university") {
+      const size = Number(formData.batchSize) || 0;
+      return 1999 * size;
+    }
+    return 0;
   };
 
   // Poll payment status in Step 4
@@ -158,6 +175,10 @@ export const RegistrationModal: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.userType === "university" && !uploadedFileName) {
+      setExcelError("Please upload the student batch spreadsheet before submitting");
+      return;
+    }
     setLoading(true);
     try {
       const price = getProgramPrice();
@@ -172,6 +193,9 @@ export const RegistrationModal: React.FC = () => {
           phone: formData.phone,
           selectedProgram: formData.selectedProgram,
           collegeName: formData.collegeName,
+          universityName: formData.universityName,
+          batchSize: formData.batchSize,
+          excelFileName: uploadedFileName,
           notes: formData.notes,
           amount: price,
         }),
@@ -345,13 +369,14 @@ export const RegistrationModal: React.FC = () => {
                       <label className="text-sm font-semibold text-[#94a3b8] tracking-wide">
                         I am registering as a:
                       </label>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <button
                           type="button"
                           onClick={() => {
                             updateFormField("userType", "student");
                             updateFormField("focusArea", "");
                             updateFormField("internshipType", "");
+                            updateFormField("batchSize", "");
                           }}
                           className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center transition-all cursor-pointer ${formData.userType === "student"
                             ? "bg-cyan-500/10 border-cyan-400 text-white shadow-[0_0_15px_rgba(34,211,238,0.15)]"
@@ -359,7 +384,23 @@ export const RegistrationModal: React.FC = () => {
                             }`}
                         >
                           <GraduationCap size={24} className={formData.userType === "student" ? "text-cyan-400" : "text-[#64748b]"} />
-                          <span className="text-sm font-bold mt-2">Student</span>
+                          <span className="text-sm font-bold mt-2 font-jakarta">Student</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateFormField("userType", "mentorship");
+                            updateFormField("focusArea", "");
+                            updateFormField("internshipType", "");
+                            updateFormField("batchSize", "");
+                          }}
+                          className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center transition-all cursor-pointer ${formData.userType === "mentorship"
+                            ? "bg-amber-500/10 border-amber-400 text-white shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+                            : "bg-[#0d1323]/40 border-[#1e293b] text-[#94a3b8] hover:border-slate-700/80"
+                            }`}
+                        >
+                          <Award size={24} className={formData.userType === "mentorship" ? "text-amber-400" : "text-[#64748b]"} />
+                          <span className="text-sm font-bold mt-2 font-jakarta">1-on-1 Mentorship</span>
                         </button>
                         <button
                           type="button"
@@ -367,6 +408,7 @@ export const RegistrationModal: React.FC = () => {
                             updateFormField("userType", "university");
                             updateFormField("focusArea", "");
                             updateFormField("internshipType", "");
+                            updateFormField("batchSize", "");
                           }}
                           className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center transition-all cursor-pointer ${formData.userType === "university"
                             ? "bg-purple-500/10 border-purple-400 text-white shadow-[0_0_15px_rgba(168,85,247,0.15)]"
@@ -374,7 +416,7 @@ export const RegistrationModal: React.FC = () => {
                             }`}
                         >
                           <School size={24} className={formData.userType === "university" ? "text-purple-400" : "text-[#64748b]"} />
-                          <span className="text-sm font-bold mt-2">University / College</span>
+                          <span className="text-sm font-bold mt-2 font-jakarta">University / College</span>
                         </button>
                       </div>
                     </div>
@@ -387,7 +429,7 @@ export const RegistrationModal: React.FC = () => {
                             Internship Duration:
                           </label>
                           <div className="grid grid-cols-2 gap-4">
-                            <button
+                             <button
                               type="button"
                               onClick={() => updateFormField("internshipType", "summer")}
                               className={`flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all cursor-pointer ${formData.internshipType === "summer"
@@ -396,7 +438,7 @@ export const RegistrationModal: React.FC = () => {
                                 }`}
                             >
                               <span className="text-xs font-bold font-jakarta">Summer Internship</span>
-                              <span className="text-[11px] text-cyan-400 font-extrabold mt-1">₹4,999</span>
+                              <span className="text-[11px] text-cyan-400 font-extrabold mt-1">₹3,999</span>
                               <span className="text-[9px] text-[#64748b] mt-0.5">(4 Weeks Duration)</span>
                             </button>
                             <button
@@ -408,7 +450,7 @@ export const RegistrationModal: React.FC = () => {
                                 }`}
                             >
                               <span className="text-xs font-bold font-jakarta">Final Year Internship</span>
-                              <span className="text-[11px] text-cyan-400 font-extrabold mt-1">₹8,999</span>
+                              <span className="text-[11px] text-cyan-400 font-extrabold mt-1">₹7,999</span>
                               <span className="text-[9px] text-[#64748b] mt-0.5">(8 Weeks Duration)</span>
                             </button>
                           </div>
@@ -430,6 +472,48 @@ export const RegistrationModal: React.FC = () => {
                                 onClick={() => updateFormField("focusArea", track)}
                                 className={`p-3 rounded-xl border text-center text-xs font-semibold font-jakarta transition-all cursor-pointer ${formData.focusArea === track
                                   ? "bg-cyan-500/10 border-cyan-400 text-white shadow-[0_0_10px_rgba(34,211,238,0.1)]"
+                                  : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:text-[#cbd5e1] hover:border-slate-700"
+                                  }`}
+                              >
+                                {track}
+                              </button>
+                            ))}
+                          </div>
+                          {formErrors.focusArea && (
+                            <span className="text-xs font-medium text-red-400 mt-1">{formErrors.focusArea}</span>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {formData.userType === "mentorship" && (
+                      <>
+                        {/* Mentorship Focus Area */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex justify-between items-center mb-1">
+                            <label className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
+                              Preferred Mentorship Track:
+                            </label>
+                            <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-jakarta">
+                              Price: ₹1,999 / Session
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {[
+                              "Frontend Development",
+                              "Backend Development",
+                              "DevOps & SRE",
+                              "Cloud Computing",
+                              "AI & Agentic AI",
+                              "UI & UX Design",
+                              "Career Transition Guidance",
+                            ].map((track) => (
+                              <button
+                                key={track}
+                                type="button"
+                                onClick={() => updateFormField("focusArea", track)}
+                                className={`p-3 rounded-xl border text-center text-xs font-semibold font-jakarta transition-all cursor-pointer ${formData.focusArea === track
+                                  ? "bg-amber-500/10 border-amber-400 text-white shadow-[0_0_10px_rgba(245,158,11,0.1)]"
                                   : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:text-[#cbd5e1] hover:border-slate-700"
                                   }`}
                               >
@@ -471,7 +555,7 @@ export const RegistrationModal: React.FC = () => {
                                 type="button"
                                 onClick={() => updateFormField("focusArea", track)}
                                 className={`p-3 rounded-xl border text-center text-xs font-semibold font-jakarta transition-all cursor-pointer ${formData.focusArea === track
-                                  ? "bg-purple-500/10 border-purple-400 text-white shadow-[0_0_10px_rgba(168,85,247,0.1)]"
+                                  ? "bg-purple-500/10 border-purple-400 text-white shadow-[0_0_10px_rgba(168,85,247,0.15)]"
                                   : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:text-[#cbd5e1] hover:border-slate-700"
                                   }`}
                               >
@@ -483,122 +567,137 @@ export const RegistrationModal: React.FC = () => {
                             <span className="text-xs font-medium text-red-400 mt-1">{formErrors.focusArea}</span>
                           )}
                         </div>
+
+                        {/* Batch Size Selector */}
+                        <div className="flex flex-col gap-2 mt-4">
+                          <label className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
+                            Select Batch Size (Mandatory):
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {["25", "50", "75", "100"].map((size) => (
+                              <button
+                                key={size}
+                                type="button"
+                                onClick={() => updateFormField("batchSize", size)}
+                                className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all cursor-pointer ${formData.batchSize === size
+                                  ? "bg-purple-500/10 border-purple-400 text-white shadow-[0_0_10px_rgba(168,85,247,0.15)]"
+                                  : "bg-[#0d1323]/40 border-[#1e293b] text-[#94a3b8] hover:border-slate-700/80"
+                                  }`}
+                              >
+                                <span className="text-xs font-bold font-jakarta">{size} Students</span>
+                                <span className="text-[10px] text-purple-400 font-extrabold mt-1">
+                                  ₹{(1999 * Number(size)).toLocaleString("en-IN")}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                          {formErrors.batchSize && (
+                            <span className="text-xs font-medium text-red-400 mt-1">{formErrors.batchSize}</span>
+                          )}
+                        </div>
                       </>
                     )}
 
-                    {/* College / University Select Input */}
-                    {(formData.userType === "student" || formData.userType === "university") && (
+                    {/* College & University Inputs */}
+                    {(formData.userType === "student" || formData.userType === "university" || formData.userType === "mentorship") && (
                       <div className="flex flex-col gap-4">
-                        {/* Selector for Institution Type */}
-                        <div className="flex flex-col gap-2">
-                          <label className="text-xs font-semibold text-[#64748b] uppercase tracking-wider font-jakarta">
-                            Institution Type:
+                        <div className="flex flex-col gap-2 relative">
+                          <label htmlFor="universitySearch" className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
+                            University Name:
                           </label>
-                          <div className="flex gap-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setInstitutionType("university");
-                                updateFormField("collegeName", "");
-                                setCollegeSearch("");
+                          <div className="relative flex items-center">
+                            <input
+                              id="universitySearch"
+                              type="text"
+                              placeholder="Type to search your university..."
+                              value={formData.universityName}
+                              onChange={(e) => {
+                                updateFormField("universityName", e.target.value);
+                                setCollegeSearch(e.target.value);
+                                setShowCollegeDropdown(true);
                               }}
-                              className={`px-4 py-2 text-xs font-bold rounded-lg border transition-all cursor-pointer font-jakarta ${institutionType === "university"
-                                ? "bg-cyan-500/10 border-cyan-400 text-cyan-400"
-                                : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:border-slate-700"
-                                }`}
-                            >
-                              University
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setInstitutionType("college");
-                                updateFormField("collegeName", "");
-                                setCollegeSearch("");
+                              onFocus={() => setShowCollegeDropdown(true)}
+                              onBlur={() => {
+                                validateField("universityName");
+                                // Slight delay to allow clicking on dropdown options
+                                setTimeout(() => setShowCollegeDropdown(false), 200);
                               }}
-                              className={`px-4 py-2 text-xs font-bold rounded-lg border transition-all cursor-pointer font-jakarta ${institutionType === "college"
-                                ? "bg-cyan-500/10 border-cyan-400 text-cyan-400"
-                                : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:border-slate-700"
-                                }`}
-                            >
-                              College
-                            </button>
+                              className={`w-full px-4 py-3 rounded-xl bg-[#090d16]/80 text-[#f1f5f9] border ${formErrors.universityName
+                                ? "border-red-500 focus:ring-red-500/20"
+                                : "border-[#1e293b] focus:border-[#22d3ee] focus:ring-cyan-500/10"
+                                } placeholder-[#475569] focus:outline-none focus:ring-4 transition-all duration-300`}
+                            />
+                            {isSearchingColleges && (
+                              <span className="absolute right-4 text-[#64748b]">
+                                <Loader2 size={16} className="animate-spin text-cyan-400" />
+                              </span>
+                            )}
                           </div>
-                        </div>
+                          {formErrors.universityName && (
+                            <span className="text-xs font-medium text-red-400 mt-1">{formErrors.universityName}</span>
+                          )}
 
-                        {/* Conditional Inputs */}
-                        {institutionType === "university" ? (
-                          <div className="flex flex-col gap-2 relative">
-                            <label htmlFor="collegeSearch" className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
-                              Select University:
-                            </label>
-                            <div className="relative flex items-center">
-                              <input
-                                id="collegeSearch"
-                                type="text"
-                                placeholder="Type to search your university..."
-                                value={formData.collegeName}
-                                onChange={(e) => {
-                                  updateFormField("collegeName", e.target.value);
-                                  setCollegeSearch(e.target.value);
-                                  setShowCollegeDropdown(true);
-                                }}
-                                onFocus={() => setShowCollegeDropdown(true)}
-                                onBlur={() => {
-                                  validateField("collegeName");
-                                  // Slight delay to allow clicking on dropdown options
-                                  setTimeout(() => setShowCollegeDropdown(false), 200);
-                                }}
-                                className={`w-full px-4 py-3 rounded-xl bg-[#090d16]/80 text-[#f1f5f9] border ${formErrors.collegeName
-                                  ? "border-red-500 focus:ring-red-500/20"
-                                  : "border-[#1e293b] focus:border-[#22d3ee] focus:ring-cyan-500/10"
-                                  } placeholder-[#475569] focus:outline-none focus:ring-4 transition-all duration-300`}
-                              />
-                              {isSearchingColleges && (
-                                <span className="absolute right-4 text-[#64748b]">
-                                  <Loader2 size={16} className="animate-spin text-cyan-400" />
-                                </span>
+                          {/* College suggestions dropdown */}
+                          {showCollegeDropdown && (colleges.length > 0 || isSearchingColleges) && (
+                            <div className="absolute top-[100%] left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-xl border border-[#1e293b] bg-[#070b13] p-1 shadow-2xl backdrop-blur-md">
+                              {isSearchingColleges && colleges.length === 0 ? (
+                                <div className="p-3 text-xs text-[#64748b] text-center font-jakarta">Searching universities...</div>
+                              ) : (
+                                colleges.map((colName) => (
+                                  <button
+                                    key={colName}
+                                    type="button"
+                                    onMouseDown={() => {
+                                      updateFormField("universityName", colName);
+                                      setCollegeSearch(colName);
+                                      setShowCollegeDropdown(false);
+                                    }}
+                                    className="w-full rounded-lg px-3 py-2.5 text-left text-xs font-semibold text-[#cbd5e1] hover:bg-[#22d3ee]/10 hover:text-[#22d3ee] transition-all cursor-pointer font-jakarta"
+                                  >
+                                    {colName}
+                                  </button>
+                                ))
                               )}
                             </div>
-                            {formErrors.collegeName && (
-                              <span className="text-xs font-medium text-red-400 mt-1">{formErrors.collegeName}</span>
-                            )}
+                          )}
+                        </div>
 
-                            {/* College suggestions dropdown */}
-                            {showCollegeDropdown && (colleges.length > 0 || isSearchingColleges) && (
-                              <div className="absolute top-[100%] left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-xl border border-[#1e293b] bg-[#070b13] p-1 shadow-2xl backdrop-blur-md">
-                                {isSearchingColleges && colleges.length === 0 ? (
-                                  <div className="p-3 text-xs text-[#64748b] text-center font-jakarta">Searching universities...</div>
-                                ) : (
-                                  colleges.map((colName) => (
-                                    <button
-                                      key={colName}
-                                      type="button"
-                                      onMouseDown={() => {
-                                        updateFormField("collegeName", colName);
-                                        setCollegeSearch(colName);
-                                        setShowCollegeDropdown(false);
-                                      }}
-                                      className="w-full rounded-lg px-3 py-2.5 text-left text-xs font-semibold text-[#cbd5e1] hover:bg-[#22d3ee]/10 hover:text-[#22d3ee] transition-all cursor-pointer font-jakarta"
-                                    >
-                                      {colName}
-                                    </button>
-                                  ))
-                                )}
-                              </div>
+                        <FormField
+                          label="College Name:"
+                          id="collegeName"
+                          placeholder="Enter your college name..."
+                          value={formData.collegeName}
+                          onChange={(e) => updateFormField("collegeName", e.target.value)}
+                          onBlur={() => validateField("collegeName")}
+                          errorText={formErrors.collegeName}
+                        />
+                      </div>
+                    )}
+
+                    {/* Finalized Amount Banner */}
+                    {(formData.userType === "student" || formData.userType === "university" || formData.userType === "mentorship") && (
+                      <div className="p-4 rounded-xl bg-slate-950/60 border border-[#1e293b] flex items-center justify-between mt-4 mb-2 font-jakarta">
+                        <div className="flex flex-col text-left">
+                          <span className="text-[10px] text-[#64748b] font-bold uppercase tracking-wider">Finalized Amount</span>
+                          <span className="text-xs text-[#cbd5e1] mt-0.5 animate-fade-in">
+                            {formData.userType === "student" && (
+                              `${formData.internshipType === "summer" ? "Summer Internship (4 Weeks)" : formData.internshipType === "final" ? "Final Year Internship (8 Weeks)" : "Select Duration"}${formData.focusArea ? ` - ${formData.focusArea}` : ""}`
                             )}
-                          </div>
-                        ) : (
-                          <FormField
-                            label="College Name:"
-                            id="collegeName"
-                            placeholder="Enter your college name..."
-                            value={formData.collegeName}
-                            onChange={(e) => updateFormField("collegeName", e.target.value)}
-                            onBlur={() => validateField("collegeName")}
-                            errorText={formErrors.collegeName}
-                          />
-                        )}
+                            {formData.userType === "mentorship" && (
+                              `1-on-1 Mentorship Session${formData.focusArea ? ` - ${formData.focusArea}` : ""}`
+                            )}
+                            {formData.userType === "university" && (
+                              formData.focusArea && formData.batchSize 
+                                ? `Workshop for ${formData.batchSize} Students - ${formData.focusArea}` 
+                                : "Select Focus & Batch"
+                            )}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-lg font-extrabold text-[#22d3ee] animate-fade-in">
+                            {getProgramPrice() > 0 ? `₹${getProgramPrice().toLocaleString("en-IN")}` : "—"}
+                          </span>
+                        </div>
                       </div>
                     )}
 
@@ -636,16 +735,71 @@ export const RegistrationModal: React.FC = () => {
                         <span className="text-sm font-semibold text-white col-span-2">{formData.email}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
-                        <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">College/University:</span>
+                        <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">University:</span>
+                        <span className="text-sm font-semibold text-white col-span-2">{formData.universityName}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
+                        <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">College:</span>
                         <span className="text-sm font-semibold text-white col-span-2">{formData.collegeName}</span>
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className={`grid grid-cols-3 gap-2 ${formData.userType === "university" && formData.batchSize ? "border-b border-[#1e293b]/40 pb-3" : ""}`}>
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Selected Program:</span>
                         <span className="text-sm font-bold text-[#22d3ee] col-span-2 uppercase tracking-wide">
                           {formData.selectedProgram}
                         </span>
                       </div>
+                      {formData.userType === "university" && formData.batchSize && (
+                        <div className="grid grid-cols-3 gap-2">
+                          <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Batch Size:</span>
+                          <span className="text-sm font-semibold text-white col-span-2">{formData.batchSize} Students</span>
+                        </div>
+                      )}
                     </div>
+
+                    {formData.userType === "university" && (
+                      <div className="flex flex-col gap-2.5">
+                        <label className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
+                          Upload Student Batch Details (Excel / CSV) <span className="text-purple-400 font-bold">*</span>
+                        </label>
+                        <div className="border border-dashed border-purple-500/30 bg-[#090d16]/30 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3 group hover:border-purple-400/50 hover:bg-[#090d16]/70 transition-all duration-300 relative cursor-pointer">
+                          <input
+                            type="file"
+                            id="excelUpload"
+                            accept=".xlsx,.xls,.csv"
+                             onChange={(e) => {
+                               const file = e.target.files?.[0];
+                               if (file) {
+                                 const extension = file.name.split('.').pop()?.toLowerCase();
+                                 if (extension === 'xlsx' || extension === 'xls' || extension === 'csv') {
+                                   setUploadedFileName(file.name);
+                                   setExcelError("");
+                                 } else {
+                                   setUploadedFileName("");
+                                   setExcelError("Only Excel (.xlsx, .xls) and CSV (.csv) files are allowed.");
+                                   // Reset native input element so same invalid file can be uploaded again to trigger error
+                                   e.target.value = "";
+                                 }
+                               }
+                             }}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                          />
+                          <div className="p-3 rounded-xl bg-[#090d16] border border-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform duration-300">
+                            <FileSpreadsheet size={20} className="text-purple-400" />
+                          </div>
+                          <div>
+                            <span className="text-xs font-bold text-white block group-hover:text-purple-300 transition-colors font-jakarta">
+                              {uploadedFileName || "Upload Batch Spreadsheet"}
+                            </span>
+                            <span className="text-[10px] text-[#64748b] mt-1 block font-jakarta font-medium">
+                              Drag and drop or click to choose Excel (.xlsx, .xls) or CSV template
+                            </span>
+                          </div>
+                        </div>
+                        {excelError && (
+                          <span className="text-xs font-semibold text-red-400 mt-1 font-jakarta">{excelError}</span>
+                        )}
+                      </div>
+                    )}
 
                     <div className="flex flex-col gap-2">
                       <label htmlFor="notes" className="text-sm font-semibold text-[#94a3b8]">
