@@ -3,14 +3,24 @@ import { create } from "zustand";
 export interface FormData {
   fullName: string;
   email: string;
+  phone: string;
   selectedProgram: string;
+  userType: "student" | "university" | "";
+  internshipType: "summer" | "final" | "";
+  focusArea: string;
+  collegeName: string;
   notes: string;
 }
 
 export interface FormErrors {
   fullName?: string;
   email?: string;
+  phone?: string;
   selectedProgram?: string;
+  userType?: string;
+  internshipType?: string;
+  focusArea?: string;
+  collegeName?: string;
 }
 
 interface AppState {
@@ -30,6 +40,7 @@ interface AppState {
   nextStep: () => boolean;
   prevStep: () => void;
   updateFormField: (field: keyof FormData, value: string) => void;
+  validateField: (field: keyof FormData) => boolean;
   validateCurrentStep: () => boolean;
   submitForm: () => Promise<boolean>;
   resetForm: () => void;
@@ -38,7 +49,12 @@ interface AppState {
 const initialFormData: FormData = {
   fullName: "",
   email: "",
+  phone: "",
   selectedProgram: "",
+  userType: "",
+  internshipType: "",
+  focusArea: "",
+  collegeName: "",
   notes: "",
 };
 
@@ -71,43 +87,116 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   updateFormField: (field, value) => {
-    set((state) => ({
-      formData: {
+    set((state) => {
+      const nextFormData = {
         ...state.formData,
         [field]: value,
-      },
-      formErrors: {
-        ...state.formErrors,
-        [field]: undefined, // Clear error when field changes
-      },
-    }));
+      };
+
+      // Auto-compute selectedProgram
+      let selectedProgram = nextFormData.selectedProgram;
+      if (nextFormData.userType === "student") {
+        const internText = nextFormData.internshipType === "summer" 
+          ? "Summer Internship (4 weeks)" 
+          : nextFormData.internshipType === "final" 
+            ? "Final Year Internship (8 weeks)" 
+            : "";
+        const focusText = nextFormData.focusArea ? nextFormData.focusArea : "";
+        selectedProgram = [internText, focusText].filter(Boolean).join(" - ");
+      } else if (nextFormData.userType === "university") {
+        const focusText = nextFormData.focusArea ? nextFormData.focusArea : "";
+        selectedProgram = ["University Workshop", focusText].filter(Boolean).join(" - ");
+      }
+
+      return {
+        formData: {
+          ...nextFormData,
+          selectedProgram,
+        },
+        formErrors: {
+          ...state.formErrors,
+          [field]: undefined, // Clear error when field changes
+        },
+      };
+    });
   },
 
-  validateCurrentStep: () => {
-    const { currentStep, formData } = get();
-    const errors: FormErrors = {};
+  validateField: (field) => {
+    const { formData } = get();
+    const errors = { ...get().formErrors };
     let isValid = true;
 
-    if (currentStep === 1) {
+    if (field === "fullName") {
       if (!formData.fullName.trim()) {
         errors.fullName = "Full name is required";
         isValid = false;
       } else if (formData.fullName.trim().length < 3) {
         errors.fullName = "Name must be at least 3 characters";
         isValid = false;
+      } else {
+        errors.fullName = undefined;
       }
+    }
 
+    if (field === "email") {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (!formData.email.trim()) {
         errors.email = "Email address is required";
         isValid = false;
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        errors.email = "Invalid email format";
+      } else if (!emailRegex.test(formData.email.trim())) {
+        errors.email = "Please enter a valid email address (e.g. name@domain.com)";
         isValid = false;
+      } else {
+        errors.email = undefined;
       }
-    } else if (currentStep === 2) {
-      if (!formData.selectedProgram) {
-        errors.selectedProgram = "Please select a program to continue";
+    }
+
+    if (field === "phone") {
+      const phoneRegex = /^[+]?[0-9\s\-()]{10,18}$/;
+      if (!formData.phone.trim()) {
+        errors.phone = "Phone number is required";
         isValid = false;
+      } else if (!phoneRegex.test(formData.phone.trim())) {
+        errors.phone = "Please enter a valid phone number (minimum 10 digits)";
+        isValid = false;
+      } else {
+        errors.phone = undefined;
+      }
+    }
+
+    if (field === "userType") {
+      if (!formData.userType) {
+        errors.userType = "Please select whether you are a Student or College Coordinator";
+        isValid = false;
+      } else {
+        errors.userType = undefined;
+      }
+    }
+
+    if (field === "internshipType") {
+      if (formData.userType === "student" && !formData.internshipType) {
+        errors.internshipType = "Please select your internship duration";
+        isValid = false;
+      } else {
+        errors.internshipType = undefined;
+      }
+    }
+
+    if (field === "focusArea") {
+      if (!formData.focusArea) {
+        errors.focusArea = "Please select your focus track";
+        isValid = false;
+      } else {
+        errors.focusArea = undefined;
+      }
+    }
+
+    if (field === "collegeName") {
+      if (!formData.collegeName.trim()) {
+        errors.collegeName = "College / University name is required";
+        isValid = false;
+      } else {
+        errors.collegeName = undefined;
       }
     }
 
@@ -115,11 +204,31 @@ export const useStore = create<AppState>((set, get) => ({
     return isValid;
   },
 
+  validateCurrentStep: () => {
+    const { currentStep, validateField, formData } = get();
+    let isValid = true;
+
+    if (currentStep === 1) {
+      const isNameValid = validateField("fullName");
+      const isEmailValid = validateField("email");
+      const isPhoneValid = validateField("phone");
+      isValid = isNameValid && isEmailValid && isPhoneValid;
+    } else if (currentStep === 2) {
+      const isUserTypeValid = validateField("userType");
+      const isInternshipValid = formData.userType === "student" ? validateField("internshipType") : true;
+      const isFocusAreaValid = validateField("focusArea");
+      const isCollegeValid = validateField("collegeName");
+      isValid = isUserTypeValid && isInternshipValid && isFocusAreaValid && isCollegeValid;
+    }
+
+    return isValid;
+  },
+
   nextStep: () => {
     const { currentStep, validateCurrentStep } = get();
     if (!validateCurrentStep()) return false;
 
-    if (currentStep < 3) {
+    if (currentStep < 4) {
       set({ currentStep: currentStep + 1 });
       return true;
     }

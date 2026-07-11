@@ -170,9 +170,10 @@ export interface RegistrationStep {
 }
 
 export const registrationSteps: RegistrationStep[] = [
-  { number: 1, title: "Personal Details" },
-  { number: 2, title: "Program Selection" },
-  { number: 3, title: "Review & Submit" },
+  { number: 1, title: "Personal" },
+  { number: 2, title: "Program" },
+  { number: 3, title: "Review" },
+  { number: 4, title: "Payment" },
 ];
 
 export const founderInfo = {
