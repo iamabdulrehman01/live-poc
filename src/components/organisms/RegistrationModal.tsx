@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { X, CheckCircle, ArrowRight, ArrowLeft, Loader2, Award, Briefcase, Laptop, GraduationCap } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, CheckCircle, ArrowRight, ArrowLeft, Loader2, Award, Briefcase, Laptop, GraduationCap, School } from "lucide-react";
 import Button from "../atoms/Button";
 import FormField from "../molecules/FormField";
 import { useStore } from "@/store/useStore";
@@ -16,12 +16,137 @@ export const RegistrationModal: React.FC = () => {
     formErrors,
     isSubmitted,
     updateFormField,
+    validateField,
     nextStep,
     prevStep,
     submitForm,
   } = useStore();
 
   const [loading, setLoading] = useState(false);
+  const [collegeSearch, setCollegeSearch] = useState("");
+  const [colleges, setColleges] = useState<string[]>([]);
+  const [isSearchingColleges, setIsSearchingColleges] = useState(false);
+  const [showCollegeDropdown, setShowCollegeDropdown] = useState(false);
+  const [institutionType, setInstitutionType] = useState<"university" | "college">("university");
+  const [orderId, setOrderId] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0);
+  const [paymentStatus, setPaymentStatus] = useState<"pending" | "success" | "failed">("pending");
+  const [approveUrl, setApproveUrl] = useState<string>("");
+  const [rejectUrl, setRejectUrl] = useState<string>("");
+
+  // Local fallback list of top universities in case public API fails or has no match
+  const LOCAL_FALLBACK_UNIVERSITIES = [
+    "Indian Institute of Technology Delhi (IIT Delhi)",
+    "Indian Institute of Technology Bombay (IIT Bombay)",
+    "Indian Institute of Technology Madras (IIT Madras)",
+    "Delhi University (DU)",
+    "Stanford University",
+    "Massachusetts Institute of Technology (MIT)",
+    "Harvard University",
+    "University of Oxford",
+    "University of Cambridge",
+    "California Institute of Technology (Caltech)",
+    "National University of Singapore (NUS)",
+    "Nanyang Technological University (NTU)",
+    "Birla Institute of Technology and Science (BITS Pilani)",
+    "Delhi Technological University (DTU)",
+    "Vellore Institute of Technology (VIT)",
+    "Manipal Academy of Higher Education",
+    "Amity University",
+    "SRM Institute of Science and Technology",
+    "Punjab University",
+    "Anna University",
+    "Jawaharlal Nehru University (JNU)"
+  ];
+
+  // Initialize search input with initial collegeName from store
+  useEffect(() => {
+    if (formData.collegeName) {
+      setCollegeSearch(formData.collegeName);
+    }
+  }, [formData.collegeName]);
+
+  // Handle university API search with debounce
+  useEffect(() => {
+    if (!collegeSearch.trim() || collegeSearch.trim().length < 3) {
+      setColleges([]);
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearchingColleges(true);
+      try {
+        const response = await fetch(`/api/universities?name=${encodeURIComponent(collegeSearch)}`);
+        if (response.ok) {
+          const data = await response.json();
+          // Extract names and filter unique values
+          const names: string[] = Array.from(new Set(data.map((uni: any) => uni.name)));
+          if (names.length > 0) {
+            setColleges(names);
+          } else {
+            // Local fallback filter if API returns empty array
+            const fallbackFilter = LOCAL_FALLBACK_UNIVERSITIES.filter((uni) =>
+              uni.toLowerCase().includes(collegeSearch.toLowerCase())
+            );
+            setColleges(fallbackFilter);
+          }
+        } else {
+          // Local fallback filter if API status not ok
+          const fallbackFilter = LOCAL_FALLBACK_UNIVERSITIES.filter((uni) =>
+            uni.toLowerCase().includes(collegeSearch.toLowerCase())
+          );
+          setColleges(fallbackFilter);
+        }
+      } catch (error) {
+        console.error("Error fetching universities:", error);
+        // Local fallback filter if API fails
+        const fallbackFilter = LOCAL_FALLBACK_UNIVERSITIES.filter((uni) =>
+          uni.toLowerCase().includes(collegeSearch.toLowerCase())
+        );
+        setColleges(fallbackFilter);
+      } finally {
+        setIsSearchingColleges(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [collegeSearch]);
+
+  // Local price mapper based on student vs college coordinator selections
+  const getProgramPrice = () => {
+    if (formData.userType === "student") {
+      return formData.internshipType === "summer" ? 4999 : 8999;
+    }
+    return 1999; // University / College Workshop
+  };
+
+  // Poll payment status in Step 4
+  useEffect(() => {
+    if (!orderId || paymentStatus !== "pending" || currentStep !== 4) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/payment-status?orderId=${orderId}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === "success") {
+            setPaymentStatus("success");
+            clearInterval(interval);
+            // Show successful status briefly, then finalize registration
+            setTimeout(async () => {
+              await submitForm(); // Transitions to the modal's success view
+            }, 2000);
+          } else if (data.status === "failed") {
+            setPaymentStatus("failed");
+          }
+        }
+      } catch (error) {
+        console.error("Error checking payment status:", error);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [orderId, paymentStatus, currentStep, submitForm]);
 
   if (!isModalOpen) return null;
 
@@ -34,8 +159,40 @@ export const RegistrationModal: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const success = await submitForm();
-    setLoading(false);
+    try {
+      const price = getProgramPrice();
+      const response = await fetch("/api/register-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          selectedProgram: formData.selectedProgram,
+          collegeName: formData.collegeName,
+          notes: formData.notes,
+          amount: price,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setOrderId(data.orderId);
+        setAmount(data.amount);
+        setApproveUrl(data.approveUrl);
+        setRejectUrl(data.rejectUrl);
+        setPaymentStatus("pending");
+        nextStep(); // Move to Step 4: Payment
+      } else {
+        console.error("Failed to register order");
+      }
+    } catch (error) {
+      console.error("Error submitting registration form:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,9 +204,12 @@ export const RegistrationModal: React.FC = () => {
       <div className="relative w-full max-w-4xl bg-[#070b13] border border-[#1e293b] rounded-3xl overflow-hidden shadow-2xl flex flex-col z-10 animate-fade-in max-h-[90vh]">
         {/* Header Bar */}
         <div className="flex items-center justify-between p-6 border-b border-[#1e293b]/50">
-          <span className="text-lg font-extrabold font-jakarta text-white">
-            Campus {" "}<span className="text-[#22d3ee] font-medium">2 Corporate</span>
-          </span>
+          <div className="flex items-center gap-2">
+            <img src="/favicon.ico" alt="C2C Logo" className="w-6 h-6 object-contain rounded-md" />
+            <span className="text-lg font-extrabold font-jakarta text-white">
+              Campus {" "}<span className="text-[#22d3ee] font-medium">2 Corporate</span>
+            </span>
+          </div>
           <button
             onClick={closeModal}
             className="p-1.5 rounded-xl bg-[#0d1323] border border-[#1e293b] text-[#64748b] hover:text-white hover:border-slate-700 transition-all cursor-pointer"
@@ -131,6 +291,7 @@ export const RegistrationModal: React.FC = () => {
                       placeholder="John Doe"
                       value={formData.fullName}
                       onChange={(e) => updateFormField("fullName", e.target.value)}
+                      onBlur={() => validateField("fullName")}
                       errorText={formErrors.fullName}
                     />
 
@@ -141,7 +302,19 @@ export const RegistrationModal: React.FC = () => {
                       placeholder="john@university.edu"
                       value={formData.email}
                       onChange={(e) => updateFormField("email", e.target.value)}
+                      onBlur={() => validateField("email")}
                       errorText={formErrors.email}
+                    />
+
+                    <FormField
+                      label="Phone Number"
+                      id="phone"
+                      type="tel"
+                      placeholder="+1 (555) 000-0000"
+                      value={formData.phone}
+                      onChange={(e) => updateFormField("phone", e.target.value)}
+                      onBlur={() => validateField("phone")}
+                      errorText={formErrors.phone}
                     />
 
                     <Button type="submit" variant="glow-teal" className="mt-4 justify-center gap-2">
@@ -161,91 +334,273 @@ export const RegistrationModal: React.FC = () => {
                       <h3 className="text-lg font-bold text-white mt-1">Program Selection</h3>
                     </div>
 
-                    {formErrors.selectedProgram && (
+                    {formErrors.userType && (
                       <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-400 text-center">
-                        {formErrors.selectedProgram}
+                        {formErrors.userType}
                       </div>
                     )}
 
-                    <div className="grid grid-cols-1 gap-4">
-                      {[
-                        {
-                          id: "internship",
-                          title: "Internship Path",
-                          desc: "Gain real-world experience on live projects.",
-                          icon: Briefcase,
-                          color: "cyan",
-                        },
-                        {
-                          id: "workshop",
-                          title: "Intensive Workshop",
-                          desc: "Master specific stacks in 48h live sessions.",
-                          icon: Laptop,
-                          color: "purple",
-                        },
-                        {
-                          id: "mentorship",
-                          title: "Career Mentorship",
-                          desc: "1-on-1 coaching with top corporate engineers.",
-                          icon: GraduationCap,
-                          color: "teal",
-                        },
-                      ].map((prog) => {
-                        const Icon = prog.icon;
-                        const isSelected = formData.selectedProgram === prog.id;
-                        return (
-                          <button
-                            key={prog.id}
-                            type="button"
-                            onClick={() => updateFormField("selectedProgram", prog.id)}
-                            className={`flex items-center justify-between p-5 rounded-2xl border text-left transition-all duration-300 cursor-pointer ${isSelected
-                              ? prog.color === "cyan"
-                                ? "bg-[#06b6d4]/5 border-[#22d3ee] shadow-[0_0_15px_rgba(64,224,244,0.05)]"
-                                : prog.color === "purple"
-                                  ? "bg-[#a855f7]/5 border-[#c084fc] shadow-[0_0_15px_rgba(168,85,247,0.05)]"
-                                  : "bg-[#2dd4bf]/5 border-[#2dd4bf] shadow-[0_0_15px_rgba(45,212,191,0.05)]"
-                              : "bg-[#0d1323]/40 border-[#1e293b] hover:border-slate-700/80"
-                              }`}
-                          >
-                            <div className="flex items-center gap-4">
-                              <div
-                                className={`p-3 rounded-xl bg-[#030712] border ${isSelected ? "border-[#22d3ee]/20" : "border-[#1e293b]"
-                                  }`}
-                              >
-                                <Icon
-                                  size={20}
-                                  className={
-                                    isSelected
-                                      ? prog.color === "cyan"
-                                        ? "text-[#22d3ee]"
-                                        : prog.color === "purple"
-                                          ? "text-[#c084fc]"
-                                          : "text-[#2dd4bf]"
-                                      : "text-[#64748b]"
-                                  }
-                                />
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-bold text-white">{prog.title}</h4>
-                                <p className="text-xs text-[#64748b] mt-0.5">{prog.desc}</p>
-                              </div>
-                            </div>
-                            <div
-                              className={`h-5 w-5 rounded-full border flex items-center justify-center transition-all ${isSelected
-                                ? prog.color === "cyan"
-                                  ? "border-[#22d3ee] bg-[#22d3ee]"
-                                  : prog.color === "purple"
-                                    ? "border-[#c084fc] bg-[#c084fc]"
-                                    : "border-[#2dd4bf] bg-[#2dd4bf]"
-                                : "border-[#334155]"
+                    {/* User Type Selection */}
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-[#94a3b8] tracking-wide">
+                        I am registering as a:
+                      </label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateFormField("userType", "student");
+                            updateFormField("focusArea", "");
+                            updateFormField("internshipType", "");
+                          }}
+                          className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center transition-all cursor-pointer ${formData.userType === "student"
+                            ? "bg-cyan-500/10 border-cyan-400 text-white shadow-[0_0_15px_rgba(34,211,238,0.15)]"
+                            : "bg-[#0d1323]/40 border-[#1e293b] text-[#94a3b8] hover:border-slate-700/80"
+                            }`}
+                        >
+                          <GraduationCap size={24} className={formData.userType === "student" ? "text-cyan-400" : "text-[#64748b]"} />
+                          <span className="text-sm font-bold mt-2">Student</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateFormField("userType", "university");
+                            updateFormField("focusArea", "");
+                            updateFormField("internshipType", "");
+                          }}
+                          className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center transition-all cursor-pointer ${formData.userType === "university"
+                            ? "bg-purple-500/10 border-purple-400 text-white shadow-[0_0_15px_rgba(168,85,247,0.15)]"
+                            : "bg-[#0d1323]/40 border-[#1e293b] text-[#94a3b8] hover:border-slate-700/80"
+                            }`}
+                        >
+                          <School size={24} className={formData.userType === "university" ? "text-purple-400" : "text-[#64748b]"} />
+                          <span className="text-sm font-bold mt-2">University / College</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {formData.userType === "student" && (
+                      <>
+                        {/* Internship Duration */}
+                        <div className="flex flex-col gap-2">
+                          <label className="text-sm font-semibold text-[#94a3b8] tracking-wide">
+                            Internship Duration:
+                          </label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <button
+                              type="button"
+                              onClick={() => updateFormField("internshipType", "summer")}
+                              className={`flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all cursor-pointer ${formData.internshipType === "summer"
+                                ? "bg-cyan-500/10 border-cyan-400 text-white shadow-[0_0_10px_rgba(34,211,238,0.1)]"
+                                : "bg-[#0d1323]/40 border-[#1e293b] text-[#94a3b8] hover:border-slate-700/80"
                                 }`}
                             >
-                              {isSelected && <span className="h-2 w-2 rounded-full bg-black" />}
+                              <span className="text-xs font-bold font-jakarta">Summer Internship</span>
+                              <span className="text-[11px] text-cyan-400 font-extrabold mt-1">₹4,999</span>
+                              <span className="text-[9px] text-[#64748b] mt-0.5">(4 Weeks Duration)</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => updateFormField("internshipType", "final")}
+                              className={`flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all cursor-pointer ${formData.internshipType === "final"
+                                ? "bg-cyan-500/10 border-cyan-400 text-white shadow-[0_0_10px_rgba(34,211,238,0.1)]"
+                                : "bg-[#0d1323]/40 border-[#1e293b] text-[#94a3b8] hover:border-slate-700/80"
+                                }`}
+                            >
+                              <span className="text-xs font-bold font-jakarta">Final Year Internship</span>
+                              <span className="text-[11px] text-cyan-400 font-extrabold mt-1">₹8,999</span>
+                              <span className="text-[9px] text-[#64748b] mt-0.5">(8 Weeks Duration)</span>
+                            </button>
+                          </div>
+                          {formErrors.internshipType && (
+                            <span className="text-xs font-medium text-red-400 mt-1">{formErrors.internshipType}</span>
+                          )}
+                        </div>
+
+                        {/* Focus Track */}
+                        <div className="flex flex-col gap-2">
+                          <label className="text-sm font-semibold text-[#94a3b8] tracking-wide">
+                            Focus Area / Tech Track:
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {["Frontend", "Backend", "DevOps", "Cloud", "AI and Agentic AI", "UI and UX"].map((track) => (
+                              <button
+                                key={track}
+                                type="button"
+                                onClick={() => updateFormField("focusArea", track)}
+                                className={`p-3 rounded-xl border text-center text-xs font-semibold font-jakarta transition-all cursor-pointer ${formData.focusArea === track
+                                  ? "bg-cyan-500/10 border-cyan-400 text-white shadow-[0_0_10px_rgba(34,211,238,0.1)]"
+                                  : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:text-[#cbd5e1] hover:border-slate-700"
+                                  }`}
+                              >
+                                {track}
+                              </button>
+                            ))}
+                          </div>
+                          {formErrors.focusArea && (
+                            <span className="text-xs font-medium text-red-400 mt-1">{formErrors.focusArea}</span>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {formData.userType === "university" && (
+                      <>
+                        {/* Workshop Focus Area */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex justify-between items-center mb-1">
+                            <label className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
+                              Preferred Workshop Area:
+                            </label>
+                            <span className="text-[10px] font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-md font-jakarta">
+                              Price: ₹1,999 / Student
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {[
+                              "Frontend",
+                              "Backend",
+                              "DevOps",
+                              "Cloud",
+                              "AI and Agentic AI",
+                              "UI and UX",
+                              "Project Management Workshops",
+                            ].map((track) => (
+                              <button
+                                key={track}
+                                type="button"
+                                onClick={() => updateFormField("focusArea", track)}
+                                className={`p-3 rounded-xl border text-center text-xs font-semibold font-jakarta transition-all cursor-pointer ${formData.focusArea === track
+                                  ? "bg-purple-500/10 border-purple-400 text-white shadow-[0_0_10px_rgba(168,85,247,0.1)]"
+                                  : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:text-[#cbd5e1] hover:border-slate-700"
+                                  }`}
+                              >
+                                {track}
+                              </button>
+                            ))}
+                          </div>
+                          {formErrors.focusArea && (
+                            <span className="text-xs font-medium text-red-400 mt-1">{formErrors.focusArea}</span>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {/* College / University Select Input */}
+                    {(formData.userType === "student" || formData.userType === "university") && (
+                      <div className="flex flex-col gap-4">
+                        {/* Selector for Institution Type */}
+                        <div className="flex flex-col gap-2">
+                          <label className="text-xs font-semibold text-[#64748b] uppercase tracking-wider font-jakarta">
+                            Institution Type:
+                          </label>
+                          <div className="flex gap-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setInstitutionType("university");
+                                updateFormField("collegeName", "");
+                                setCollegeSearch("");
+                              }}
+                              className={`px-4 py-2 text-xs font-bold rounded-lg border transition-all cursor-pointer font-jakarta ${institutionType === "university"
+                                ? "bg-cyan-500/10 border-cyan-400 text-cyan-400"
+                                : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:border-slate-700"
+                                }`}
+                            >
+                              University
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setInstitutionType("college");
+                                updateFormField("collegeName", "");
+                                setCollegeSearch("");
+                              }}
+                              className={`px-4 py-2 text-xs font-bold rounded-lg border transition-all cursor-pointer font-jakarta ${institutionType === "college"
+                                ? "bg-cyan-500/10 border-cyan-400 text-cyan-400"
+                                : "bg-[#0d1323]/40 border-[#1e293b] text-[#64748b] hover:border-slate-700"
+                                }`}
+                            >
+                              College
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Conditional Inputs */}
+                        {institutionType === "university" ? (
+                          <div className="flex flex-col gap-2 relative">
+                            <label htmlFor="collegeSearch" className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
+                              Select University:
+                            </label>
+                            <div className="relative flex items-center">
+                              <input
+                                id="collegeSearch"
+                                type="text"
+                                placeholder="Type to search your university..."
+                                value={formData.collegeName}
+                                onChange={(e) => {
+                                  updateFormField("collegeName", e.target.value);
+                                  setCollegeSearch(e.target.value);
+                                  setShowCollegeDropdown(true);
+                                }}
+                                onFocus={() => setShowCollegeDropdown(true)}
+                                onBlur={() => {
+                                  validateField("collegeName");
+                                  // Slight delay to allow clicking on dropdown options
+                                  setTimeout(() => setShowCollegeDropdown(false), 200);
+                                }}
+                                className={`w-full px-4 py-3 rounded-xl bg-[#090d16]/80 text-[#f1f5f9] border ${formErrors.collegeName
+                                  ? "border-red-500 focus:ring-red-500/20"
+                                  : "border-[#1e293b] focus:border-[#22d3ee] focus:ring-cyan-500/10"
+                                  } placeholder-[#475569] focus:outline-none focus:ring-4 transition-all duration-300`}
+                              />
+                              {isSearchingColleges && (
+                                <span className="absolute right-4 text-[#64748b]">
+                                  <Loader2 size={16} className="animate-spin text-cyan-400" />
+                                </span>
+                              )}
                             </div>
-                          </button>
-                        );
-                      })}
-                    </div>
+                            {formErrors.collegeName && (
+                              <span className="text-xs font-medium text-red-400 mt-1">{formErrors.collegeName}</span>
+                            )}
+
+                            {/* College suggestions dropdown */}
+                            {showCollegeDropdown && (colleges.length > 0 || isSearchingColleges) && (
+                              <div className="absolute top-[100%] left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-xl border border-[#1e293b] bg-[#070b13] p-1 shadow-2xl backdrop-blur-md">
+                                {isSearchingColleges && colleges.length === 0 ? (
+                                  <div className="p-3 text-xs text-[#64748b] text-center font-jakarta">Searching universities...</div>
+                                ) : (
+                                  colleges.map((colName) => (
+                                    <button
+                                      key={colName}
+                                      type="button"
+                                      onMouseDown={() => {
+                                        updateFormField("collegeName", colName);
+                                        setCollegeSearch(colName);
+                                        setShowCollegeDropdown(false);
+                                      }}
+                                      className="w-full rounded-lg px-3 py-2.5 text-left text-xs font-semibold text-[#cbd5e1] hover:bg-[#22d3ee]/10 hover:text-[#22d3ee] transition-all cursor-pointer font-jakarta"
+                                    >
+                                      {colName}
+                                    </button>
+                                  ))
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <FormField
+                            label="College Name:"
+                            id="collegeName"
+                            placeholder="Enter your college name..."
+                            value={formData.collegeName}
+                            onChange={(e) => updateFormField("collegeName", e.target.value)}
+                            onBlur={() => validateField("collegeName")}
+                            errorText={formErrors.collegeName}
+                          />
+                        )}
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4 mt-2">
                       <Button type="button" variant="secondary" onClick={prevStep} className="justify-center gap-2">
@@ -279,6 +634,10 @@ export const RegistrationModal: React.FC = () => {
                       <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Email:</span>
                         <span className="text-sm font-semibold text-white col-span-2">{formData.email}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
+                        <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">College/University:</span>
+                        <span className="text-sm font-semibold text-white col-span-2">{formData.collegeName}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Selected Program:</span>
@@ -333,6 +692,97 @@ export const RegistrationModal: React.FC = () => {
                       </Button>
                     </div>
                   </form>
+                )}
+
+                {/* STEP 4: Payment */}
+                {currentStep === 4 && (
+                  <div className="flex flex-col gap-6">
+                    <div className="border-b border-[#1e293b]/40 pb-4 mb-2">
+                      <span className="text-[10px] text-cyan-400 font-extrabold uppercase tracking-widest font-jakarta">
+                        Step 4 of 4
+                      </span>
+                      <h3 className="text-lg font-bold text-white mt-1 font-jakarta">Scan & Pay via UPI</h3>
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-[#030712] border border-[#1e293b] flex flex-col gap-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider block font-jakarta">Order ID</span>
+                          <span className="text-sm font-semibold text-white font-mono">{orderId}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider block font-jakarta">Amount Due</span>
+                          <span className="text-lg font-bold text-[#22d3ee] font-jakarta">₹{amount.toLocaleString("en-IN")}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {paymentStatus === "pending" && (
+                      <div className="flex flex-col items-center gap-6 py-4">
+                        {/* QR Code Container */}
+                        <div className="flex flex-col items-center gap-4 text-center">
+                          <div className="border border-[#1e293b]/50 p-4 rounded-3xl bg-slate-950/80 shadow-[0_0_30px_rgba(34,211,238,0.15)] relative group overflow-hidden">
+                            <img
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                                `upi://pay?pa=abdulrehman630092@okaxis&pn=Campus%20to%20Corporate&am=${amount}&tr=${orderId}&cu=INR&tn=C2C%20Program%20Fee`
+                              )}`}
+                              alt="UPI QR Code"
+                              className="w-[180px] h-[180px] rounded-xl relative z-10"
+                            />
+                          </div>
+                          <div>
+                            <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider font-jakarta">UPI ID:</span>
+                            <span className="text-sm font-semibold text-white ml-2 font-jakarta">abdulrehman630092@okaxis</span>
+                          </div>
+                        </div>
+
+                        {/* Status notification */}
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-cyan-500/5 border border-cyan-500/20 text-xs font-semibold text-cyan-400 animate-pulse text-center w-full justify-center font-jakarta">
+                          <Loader2 size={16} className="animate-spin text-cyan-400" />
+                          <span>Waiting for Admin Department for confirmation... Portal will update instantly.</span>
+                        </div>
+
+                        <p className="text-xs text-[#64748b] text-center leading-relaxed max-w-sm font-jakarta">
+                          An automated verification request has been emailed to the founder (<span className="text-white font-medium">abdulrehman630092@gmail.com</span>). Once they verify receipt, your status will update.
+                        </p>
+                      </div>
+                    )}
+
+                    {paymentStatus === "success" && (
+                      <div className="flex flex-col items-center gap-4 py-8 text-center">
+                        <div className="h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-400 flex items-center justify-center animate-bounce">
+                          <CheckCircle size={32} />
+                        </div>
+                        <h4 className="text-lg font-bold text-white font-jakarta">Payment Received!</h4>
+                        <p className="text-sm text-[#94a3b8] max-w-xs font-jakarta">
+                          Admin confirmed receipt. Finalizing your dashboard registration profile...
+                        </p>
+                      </div>
+                    )}
+
+                    {paymentStatus === "failed" && (
+                      <div className="flex flex-col items-center gap-4 py-6 text-center">
+                        <div className="h-16 w-16 rounded-full bg-red-500/10 border border-red-400/30 text-red-400 flex items-center justify-center">
+                          <X size={32} />
+                        </div>
+                        <h4 className="text-lg font-bold text-white font-jakarta">Payment Rejected</h4>
+                        <p className="text-sm text-[#94a3b8] max-w-xs mb-2 font-jakarta">
+                          The payment could not be verified by the Admin. Please try scanning again or contact support.
+                        </p>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => {
+                            setPaymentStatus("pending");
+                            setOrderId("");
+                          }}
+                          className="px-6 py-2 text-xs font-jakarta"
+                        >
+                          Retry Payment
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
