@@ -177,12 +177,12 @@ export const useStore = create<AppState>((set, get) => ({
     }
 
     if (field === "phone") {
-      const phoneRegex = /^[+]?[0-9\s\-()]{10,18}$/;
+      const phoneRegex = /^[0-9]{10}$/;
       if (!formData.phone.trim()) {
         errors.phone = "Phone number is required";
         isValid = false;
       } else if (!phoneRegex.test(formData.phone.trim())) {
-        errors.phone = "Please enter a valid phone number (minimum 10 digits)";
+        errors.phone = "Please enter a valid 10-digit phone number";
         isValid = false;
       } else {
         errors.phone = undefined;
