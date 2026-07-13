@@ -6,6 +6,7 @@ import ServicesSection from "@/components/organisms/ServicesSection";
 import ProgramsSection from "@/components/organisms/ProgramsSection";
 import WhoWeAre from "@/components/organisms/WhoWeAre";
 import SuccessStories from "@/components/organisms/SuccessStories";
+import Marquee from "@/components/organisms/Marquee";
 import CTASection from "@/components/organisms/CTASection";
 import Footer from "@/components/organisms/Footer";
 import RegistrationModal from "@/components/organisms/RegistrationModal";
@@ -20,6 +21,8 @@ export default function Home() {
       <main className="flex-grow">
         {/* Hero Banner Area */}
         <HeroSection />
+
+        <Marquee />
 
         {/* Highlight Statistics */}
         <StatsGrid />
