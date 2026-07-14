@@ -16,52 +16,44 @@ interface TeamMember {
 const teamMembers: TeamMember[] = [
   {
     id: 1,
-    name: "Rishikesh Gupta",
-    role: "CEO & Founder",
+    name: "Abhishek Kumar",
+    role: "Founder",
     department: "Leadership",
-    avatarUrl: "/images/founder.jpg",
-    bio: "Rishikesh Gupta is a dedicated strategist committed to bridging the gap between academic systems and modern corporate environments. With over a decade of mentorship and business experience, he founded Campus to Corporate to empower young professionals. He combines institutional stability with the agility of high-tech startups."
+    avatarUrl: "/images/AbhishekPhoto.jpeg",
+    bio: "Abhishek Kumar brings over two decades of experience in engineering leadership and digital transformation across global financial services and technology domains. He has held senior roles at Coforge, Amazon, Barclays, NatWest, and Infosys, where he led large-scale banking modernization, cloud migrations, AI-led assurance platforms, and global product expansions. His expertise spans BFS retail banking, trading systems, and enterprise automation, consistently delivering measurable impact in efficiency, cost reduction, and customer satisfaction. Certified in AWS and advanced enterprise technologies, Abhishek combines deep technical proficiency with proven leadership in building high-performing teams and driving innovation at scale. ",
   },
   {
     id: 2,
-    name: "Ananya Sharma",
-    role: "Co-Founder & COO",
-    department: "Leadership",
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200",
-    bio: "Ananya oversees operations and strategic corporate alignment at Campus to Corporate. With a background in organizational behavior and HR development, she ensures all program curriculums meet global industry expectations. She excels at building strong pipelines with recruiters. Ananya oversees operations and strategic corporate alignment at Campus to Corporate. With a background in organizational behavior and HR development, she ensures all program curriculums meet global industry expectations. She excels at building strong pipelines with recruiters."
+    name: "Saket Sharma",
+    role: "Delivery Head Program Manager",
+    department: "Delivery Head Program Manager",
+    avatarUrl: "/images/SaketSharma.jpg",
+    bio: "Saket Sharma is an experienced technology and delivery professional with over 16 years of experience in project management, program delivery, product ownership, and digital transformation. He has successfully led complex technology initiatives across banking, insurance, payments, e-commerce, and travel technology domains. With strong expertise in Agile delivery, stakeholder management, product strategy, API integrations, Salesforce platforms, and cross-functional team leadership, Saket has a proven ability to bridge business objectives with technology execution. Throughout his career, he has worked closely with global stakeholders and multidisciplinary teams to deliver scalable digital solutions, improve operational efficiency, and drive measurable business outcomes. ",
+  },
+  {
+    id: 4,
+    name: "Anand Shankar",
+    role: "CTO – Backend and Frontend & Founder",
+    department: "Engineering",
+    avatarUrl: "/images/AnandShankar.jpg",
+    bio: "Anand is a seasoned technology leader with more than 20 years of experience in software development, system design, and enterprise architecture. His career spans multiple industries and global markets, where he has consistently driven innovation, scalability, and excellence in IT strategy. He holds advanced academic credentials including an MCA, Ph.D. in Computer Science, LLM in Criminal Law, LLB in Corporate Law, and MIPL in Intellectual Property. This rare combination of technical and legal expertise enables him to approach challenges from both an engineering and governance perspective, delivering solutions that are innovative, resilient, and compliant. ",
   },
   {
     id: 3,
-    name: "Aaryan K.",
-    role: "Chief Technology Officer",
-    department: "Engineering",
-    avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200&h=200",
-    bio: "Aaryan is a technical leader who structures our engineering bootcamps and corporate tech tracks. Prior to this, he led scalable software engineering divisions at high-growth startups. He focuses on practical, real-world development workflows, system architecture, and modern frontend tools."
+    name: "Rishikesh Kumar",
+    role: "Co-CEO & Founder",
+    department: "Co-CEO & Founder",
+    avatarUrl: "/images/RishikeshKumar.jpg",
+    bio: "Rishikesh Kumar is the founder and CEO of Dawdle.live (world’s largest community platform for CXOs and senior leaders). He comes with more than 18 years of experience in managing end to end business P&L, driving digital transformation and sales & marketing. He has played a pivotal role in the growth of start-ups like Routematic, Pristyn Care and PagarBook. Besides, he has held leadership positions in companies like Sterlite Power, Shapoorji Paloonji. He is a full time MBA alumnus of FMS Delhi. ",
   },
-  // {
-  //   id: 4,
-  //   name: "Sarah Miller",
-  //   role: "Head of Product Design",
-  //   department: "Design",
-  //   avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200&h=200",
-  //   bio: "Sarah leads our UX/UI curriculums and student interface designs. She holds a master's degree in human-computer interaction and has mentored hundreds of aspiring designers. Her training focuses on user empathy, visual hierarchy, branding, and industry-standard design tools like Figma."
-  // },
   {
     id: 5,
-    name: "Devon Chen",
-    role: "Lead Software Architect",
+    name: "Deepak Sharma",
+    role: "CTO – Cloud and AI & Founde",
     department: "Engineering",
-    avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200&h=200",
-    bio: "Devon specializes in backend scaling, cloud services, and database engineering. He designs simulations of production-level outages for our advanced students. His teaching emphasizes automated testing, Docker containers, clean code principles, and cloud-native architectures."
+    avatarUrl: "/images/DeepakSharma.jpg",
+    bio: "Enterprise Data & Technology Strategist with more than 17 years of experience leading large-scale, enterprise data, cloud, and master data transformation programs across Banking, Manufacturing, and Consumer Goods domains. Proven track record of shaping enterprise data strategy, modernizing legacy platforms to cloud-native ecosystems, and building scalable Customer Data Platforms (CDP) and Master Data Management (MDM) capabilities to enable digital transformation, operational efficiency, regulatory compliance, and business growth. Recognized for partnering with CXO and senior business stakeholders to define target-state architectures, enterprise data roadmaps, digital transformation and cloud modernization strategies, and enterprise integration models across complex multi-year transformation programs. Experienced in building and leading high-performing architecture and data engineering teams, establishing governance frameworks, and driving adoption of cloud-first and data-driven operating models. Currently operating in a senior leadership capacity spanning enterprise data strategy, cloud platform architecture, solution governance, and large-scale delivery leadership. ",
   },
-  {
-    id: 6,
-    name: "Priya Nair",
-    role: "VP of Talent Acquisition",
-    department: "Human Resources",
-    avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200&h=200",
-    bio: "Priya guides our students through critical career transitions, corporate grooming, and interview readiness. With a background of placing talent in Fortune 500 corporations, she delivers practical, mock interviewer feedback and helps graduates refine their resumes and GitHub profiles."
-  }
 ];
 
 const TeamMemberCard: React.FC<{ member: TeamMember }> = ({ member }) => {
@@ -73,8 +65,9 @@ const TeamMemberCard: React.FC<{ member: TeamMember }> = ({ member }) => {
       className="relative w-full h-[240px] perspective-1000 cursor-pointer group"
     >
       <div
-        className={`relative w-full h-full duration-700 transform-style-3d transition-transform ${isFlipped ? "rotate-y-180" : "group-hover:[transform:rotateY(180deg)]"
-          }`}
+        className={`relative w-full h-full duration-700 transform-style-3d transition-transform ${
+          isFlipped ? "rotate-y-180" : "group-hover:[transform:rotateY(180deg)]"
+        }`}
       >
         {/* Front Side */}
         <div className="absolute inset-0 w-full h-full backface-hidden rounded-3xl bg-[#0d0e22] border border-white/5 shadow-2xl flex flex-col items-center justify-center p-6 transition-all duration-300 group-hover:border-purple-500/30">
@@ -88,13 +81,15 @@ const TeamMemberCard: React.FC<{ member: TeamMember }> = ({ member }) => {
                   className="w-full h-full object-cover grayscale-[20%] transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => {
                     // Fallback to user icon if image fails to load
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                     const fallbackEl = e.currentTarget.nextElementSibling;
-                    if (fallbackEl) fallbackEl.classList.remove('hidden');
+                    if (fallbackEl) fallbackEl.classList.remove("hidden");
                   }}
                 />
               ) : null}
-              <div className={`fallback-icon w-full h-full flex items-center justify-center text-purple-400 ${member.avatarUrl ? 'hidden' : ''}`}>
+              <div
+                className={`fallback-icon w-full h-full flex items-center justify-center text-purple-400 ${member.avatarUrl ? "hidden" : ""}`}
+              >
                 <User size={36} />
               </div>
             </div>
@@ -122,14 +117,18 @@ const TeamMemberCard: React.FC<{ member: TeamMember }> = ({ member }) => {
                   alt={member.name}
                   className="w-full h-full object-cover grayscale-[20%]"
                   onError={(e) => {
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               ) : null}
             </div>
             <div className="min-w-0">
-              <h4 className="text-white font-bold text-sm truncate">{member.name}</h4>
-              <p className="text-purple-400 text-[10px] font-semibold truncate">{member.role}</p>
+              <h4 className="text-white font-bold text-sm truncate">
+                {member.name}
+              </h4>
+              <p className="text-purple-400 text-[10px] font-semibold truncate">
+                {member.role}
+              </p>
             </div>
           </div>
 
@@ -145,7 +144,10 @@ const TeamMemberCard: React.FC<{ member: TeamMember }> = ({ member }) => {
 
 export const WhoWeAre: React.FC = () => {
   return (
-    <section id="about" className="relative py-20 md:py-28 bg-[#030712] overflow-hidden">
+    <section
+      id="about"
+      className="relative py-20 md:py-28 bg-[#030712] overflow-hidden"
+    >
       {/* Visual lighting blobs */}
       <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-purple-500/5 blur-[130px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-cyan-500/5 blur-[130px] pointer-events-none" />
@@ -158,7 +160,8 @@ export const WhoWeAre: React.FC = () => {
             <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#a855f7] rounded-full" />
           </Heading>
           <p className="text-[#94a3b8] text-sm md:text-base mt-2">
-            Meet the leaders and industry experts bridging the gap between institutional education and top-tier corporate performance.
+            Meet the leaders and industry experts bridging the gap between
+            institutional education and top-tier corporate performance.
           </p>
         </div>
 

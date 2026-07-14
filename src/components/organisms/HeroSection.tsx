@@ -7,6 +7,7 @@ import Heading from "../atoms/Heading";
 import StatItem from "../atoms/StatItem";
 import { horizontalStats } from "@/store/db";
 import { useStore } from "@/store/useStore";
+import { PiTrademark } from "react-icons/pi";
 
 export const HeroSection: React.FC = () => {
   const openModal = useStore((state) => state.openModal);
@@ -82,6 +83,7 @@ export const HeroSection: React.FC = () => {
             <div className="relative w-full max-w-md aspect-[4/3] rounded-3xl p-3 bg-gradient-to-tr from-[#22d3ee]/25 via-transparent to-[#a855f7]/25 border border-white/10 backdrop-blur-md shadow-2xl animate-float">
               {/* Internal image layout */}
               <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#030712]">
+                <PiTrademark className="absolute top-1.5 right-1 z-10 text-black text-xl" />
                 <img
                   src="/images/hero-collaboration.jpeg"
                   alt="Students Collaborating"
@@ -118,8 +120,9 @@ export const HeroSection: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className={`flex flex-col items-center justify-center ${idx === 4 ? "col-span-2 md:col-span-1" : ""
-                    }`}
+                  className={`flex flex-col items-center justify-center ${
+                    idx === 4 ? "col-span-2 md:col-span-1" : ""
+                  }`}
                 >
                   <StatItem
                     value={stat.value}
