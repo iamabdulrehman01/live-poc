@@ -128,7 +128,7 @@ export const RegistrationModal: React.FC = () => {
       return formData.internshipType === "summer" ? 3999 : 7999;
     }
     if (formData.userType === "mentorship") {
-      return 1999;
+      return 499;
     }
     if (formData.userType === "university") {
       const size = Number(formData.batchSize) || 0;
@@ -491,6 +491,19 @@ export const RegistrationModal: React.FC = () => {
 
                     {formData.userType === "mentorship" && (
                       <>
+                        {/* Mentorship Header / Powered By Dawdle.live Banner */}
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-purple-500/5 border border-purple-500/10 mb-4">
+                          <img
+                            src="/images/dawdle-logo.png"
+                            alt="Dawdle.live Logo"
+                            className="h-6 object-contain"
+                          />
+                          <div className="h-4 w-[1px] bg-[#1e293b]" />
+                          <span className="text-xs font-semibold text-purple-300 font-jakarta tracking-wide">
+                            Mentorship (powered by Dawdle.live)
+                          </span>
+                        </div>
+
                         {/* Mentorship Focus Area */}
                         <div className="flex flex-col gap-2">
                           <div className="flex justify-between items-center mb-1">
@@ -498,7 +511,7 @@ export const RegistrationModal: React.FC = () => {
                               Preferred Mentorship Track:
                             </label>
                             <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-jakarta">
-                              Price: ₹1,999 / Session
+                              Price: ₹499 / Program
                             </span>
                           </div>
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
