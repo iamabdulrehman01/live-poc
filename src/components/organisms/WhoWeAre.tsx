@@ -18,7 +18,7 @@ const teamMembers: TeamMember[] = [
     id: 1,
     name: "Rishikesh Kumar",
     role: "Founder",
-    department: "Mentorship (powered by Dawdle.live)",
+    department: "",
     avatarUrl: "/images/RishikeshKumar.jpg",
     bio: "Rishikesh Kumar is the founder and CEO of Dawdle.live (world’s largest community platform for CXOs and senior leaders). He comes with more than 18 years of experience in managing end to end business P&L, driving digital transformation and sales & marketing. He has played a pivotal role in the growth of start-ups like Routematic, Pristyn Care and PagarBook. Besides, he has held leadership positions in companies like Sterlite Power, Shapoorji Paloonji. He is a full time MBA alumnus of FMS Delhi.",
   },
@@ -26,31 +26,31 @@ const teamMembers: TeamMember[] = [
     id: 2,
     name: "Abhishek Kumar",
     role: "Founder",
-    department: "Mentorship (powered by Dawdle.live)",
+    department: "",
     avatarUrl: "/images/AbhishekPhoto.jpeg",
     bio: "Abhishek Kumar brings over two decades of experience in engineering leadership and digital transformation across global financial services and technology domains. He has held senior roles at Coforge, Amazon, Barclays, NatWest, and Infosys, where he led large-scale banking modernization, cloud migrations, AI-led assurance platforms, and global product expansions. His expertise spans BFS retail banking, trading systems, and enterprise automation, consistently delivering measurable impact in efficiency, cost reduction, and customer satisfaction. Certified in AWS and advanced enterprise technologies, Abhishek combines deep technical proficiency with proven leadership in building high-performing teams and driving innovation at scale.",
   },
   {
     id: 3,
     name: "Anand Shankar",
-    role: "Founder - CTO Frontend & Backend",
-    department: "Mentorship (powered by Dawdle.live)",
+    role: "Co-Founder & CTO - Frontend & Backend Technologies",
+    department: "",
     avatarUrl: "/images/AnandShankar.jpg",
     bio: "Anand is a seasoned technology leader with more than 20 years of experience in software development, system design, and enterprise architecture. His career spans multiple industries and global markets, where he has consistently driven innovation, scalability, and excellence in IT strategy. He holds advanced academic credentials including an MCA, Ph.D. in Computer Science, LLM in Criminal Law, LLB in Corporate Law, and MIPL in Intellectual Property. This rare combination of technical and legal expertise enables him to approach challenges from both an engineering and governance perspective, delivering solutions that are innovative, resilient, and compliant.",
   },
   {
     id: 4,
     name: "Deepak Sharma",
-    role: "Founder - CTO Cloud & AI",
-    department: "Mentorship (powered by Dawdle.live)",
+    role: "Co-Founder & (CTO) - Cloud & AI",
+    department: "",
     avatarUrl: "/images/DeepakSharma.jpg",
     bio: "Enterprise Data & Technology Strategist with more than 17 years of experience leading large-scale, enterprise data, cloud, and master data transformation programs across Banking, Manufacturing, and Consumer Goods domains. Proven track record of shaping enterprise data strategy, modernizing legacy platforms to cloud-native ecosystems, and building scalable Customer Data Platforms (CDP) and Master Data Management (MDM) capabilities to enable digital transformation, operational efficiency, regulatory compliance, and business growth. Recognized for partnering with CXO and senior business stakeholders to define target-state architectures, enterprise data roadmaps, digital transformation and cloud modernization strategies, and enterprise integration models across complex multi-year transformation programs. Experienced in building and leading high-performing architecture and data engineering teams, establishing governance frameworks, and driving adoption of cloud-first and data-driven operating models. Currently operating in a senior leadership capacity spanning enterprise data strategy, cloud platform architecture, solution governance, and large-scale delivery leadership.",
   },
   {
     id: 5,
     name: "Saket Sharma",
-    role: "Founder - Delivery Head Program Management",
-    department: "Mentorship (powered by Dawdle.live)",
+    role: "Co-Founder & Delivery Head - Program Management",
+    department: "",
     avatarUrl: "/images/SaketSharma.jpg",
     bio: "Saket Sharma is an experienced technology and delivery professional with over 16 years of experience in project management, program delivery, product ownership, and digital transformation. He has successfully led complex technology initiatives across banking, insurance, payments, e-commerce, and travel technology domains. With strong expertise in Agile delivery, stakeholder management, product strategy, API integrations, Salesforce platforms, and cross-functional team leadership, Saket has a proven ability to bridge business objectives with technology execution. Throughout his career, he has worked closely with global stakeholders and multidisciplinary teams to deliver scalable digital solutions, improve operational efficiency, and drive measurable business outcomes.",
   },
@@ -65,8 +65,9 @@ const TeamMemberCard: React.FC<{ member: TeamMember }> = ({ member }) => {
       className="relative w-full h-[240px] perspective-1000 cursor-pointer group"
     >
       <div
-        className={`relative w-full h-full duration-700 transform-style-3d transition-transform ${isFlipped ? "rotate-y-180" : "group-hover:[transform:rotateY(180deg)]"
-          }`}
+        className={`relative w-full h-full duration-700 transform-style-3d transition-transform ${
+          isFlipped ? "rotate-y-180" : "group-hover:[transform:rotateY(180deg)]"
+        }`}
       >
         {/* Front Side */}
         <div className="absolute inset-0 w-full h-full backface-hidden rounded-3xl bg-[#0d0e22] border border-white/5 shadow-2xl flex flex-col items-center justify-center p-6 transition-all duration-300 group-hover:border-purple-500/30">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { Menu, X, ArrowRight } from "lucide-react";
 import Button from "../atoms/Button";
 import { navLinks } from "@/store/db";
@@ -28,7 +29,9 @@ export const Navbar: React.FC = () => {
   // Track active section via Intersection Observer
   useEffect(() => {
     const sectionIds = ["home", "programs", "about"];
-    const elements = sectionIds.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
 
     const observerOptions = {
       root: null,
@@ -47,14 +50,14 @@ export const Navbar: React.FC = () => {
       });
     }, observerOptions);
 
-    elements.forEach(el => observer.observe(el));
+    elements.forEach((el) => observer.observe(el));
 
     return () => {
-      elements.forEach(el => observer.unobserve(el));
+      elements.forEach((el) => observer.unobserve(el));
     };
   }, []);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, label: string) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLElement>, label: string) => {
     e.preventDefault();
     setActiveSection(label);
 
@@ -73,19 +76,34 @@ export const Navbar: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isOpen ? "pt-4 pb-0" : "py-4"
-        } ${scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isOpen ? "pt-4 pb-0" : "py-4"
+      } ${
+        scrolled
           ? "bg-[#030712]/80 backdrop-blur-md border-b border-[#1e293b]/50 shadow-lg"
           : "bg-transparent"
-        }`}
+      }`}
     >
       <div className="max-w-[1280px] mx-auto w-full">
         {/* Inner navbar */}
         <div className="px-4">
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between glass py-3 rounded-md">
             {/* Brand Logo */}
-            <div className="flex items-center gap-2">
-              <img src="/favicon.ico" alt="C2C Logo" className="w-10 h-10 object-contain rounded-md" />
+            <div
+              className="flex flex-col items-center cursor-pointer"
+              onClick={(e) => handleNavClick(e, "Home")}
+              role="button"
+              tabIndex={0}
+              aria-label="Go to Home section"
+            >
+              <Image
+                src="/favicon.ico"
+                alt="C2C Logo"
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain rounded-md pointer-events-none"
+              />
+              <p className="text-md text-[#a855f7]">A Dawdle.live Company</p>
             </div>
 
             {/* Desktop Sitemap */}
@@ -97,8 +115,11 @@ export const Navbar: React.FC = () => {
                     key={link.href}
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.label)}
-                    className={`text-sm font-semibold transition-colors duration-300 ${isActive ? "text-[#22d3ee]" : "text-[#94a3b8] hover:text-[#22d3ee]"
-                      }`}
+                    className={`text-md font-semibold transition-colors duration-300  ${
+                      isActive
+                        ? "text-[#22d3ee]"
+                        : "text-white hover:text-[#22d3ee]"
+                    }`}
                   >
                     {link.label}
                   </a>
@@ -112,9 +133,9 @@ export const Navbar: React.FC = () => {
                 variant="glow-teal"
                 size="sm"
                 onClick={() => openModal()}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 py-3.5"
               >
-                <span>Get Started</span>
+                Get Started
                 <ArrowRight size={16} />
               </Button>
             </div>
@@ -129,46 +150,47 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* Mobile Drawer Dropdown */}
-      {
-        isOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-[#030712]/95 border-b border-[#1e293b] backdrop-blur-lg px-6 py-8 flex flex-col gap-6 animate-fade-in shadow-xl">
-            <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => {
-                const isActive = activeSection === link.label;
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => {
-                      handleNavClick(e, link.label);
-                      setIsOpen(false);
-                    }}
-                    className={`text-base font-semibold transition-colors duration-300 ${isActive ? "text-[#22d3ee]" : "text-[#94a3b8] hover:text-[#22d3ee]"
-                      }`}
-                  >
-                    {link.label}
-                  </a>
-                );
-              })}
-            </nav>
-            <Button
-              variant="glow-teal"
-              onClick={() => {
-                setIsOpen(false);
-                openModal();
-              }}
-              className="w-full justify-center flex items-center gap-2"
-            >
-              <span>Get Started</span>
-              <ArrowRight size={16} />
-            </Button>
-          </div>
-        )
-      }
-    </header >
+      {isOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-[#030712]/95 border-b border-[#1e293b] backdrop-blur-lg px-6 py-8 flex flex-col gap-6 animate-fade-in shadow-xl">
+          <nav className="flex flex-col gap-4">
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.label;
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    handleNavClick(e, link.label);
+                    setIsOpen(false);
+                  }}
+                  className={`text-base font-semibold transition-colors duration-300 ${
+                    isActive
+                      ? "text-[#22d3ee]"
+                      : "text-[#94a3b8] hover:text-[#22d3ee]"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
+          </nav>
+          <Button
+            variant="glow-teal"
+            onClick={() => {
+              setIsOpen(false);
+              openModal();
+            }}
+            className="w-full justify-center flex items-center gap-2"
+          >
+            <span>Get Started</span>
+            <ArrowRight size={16} />
+          </Button>
+        </div>
+      )}
+    </header>
   );
 };
 export default Navbar;
