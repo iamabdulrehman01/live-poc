@@ -41,7 +41,7 @@ const teamMembers: TeamMember[] = [
   {
     id: 4,
     name: "Deepak Sharma",
-    role: "Co-Founder & (CTO) - Cloud & AI",
+    role: "Co-Founder & CTO - Cloud & AI",
     department: "",
     avatarUrl: "/images/DeepakSharma.jpg",
     bio: "Enterprise Data & Technology Strategist with more than 17 years of experience leading large-scale, enterprise data, cloud, and master data transformation programs across Banking, Manufacturing, and Consumer Goods domains. Proven track record of shaping enterprise data strategy, modernizing legacy platforms to cloud-native ecosystems, and building scalable Customer Data Platforms (CDP) and Master Data Management (MDM) capabilities to enable digital transformation, operational efficiency, regulatory compliance, and business growth. Recognized for partnering with CXO and senior business stakeholders to define target-state architectures, enterprise data roadmaps, digital transformation and cloud modernization strategies, and enterprise integration models across complex multi-year transformation programs. Experienced in building and leading high-performing architecture and data engineering teams, establishing governance frameworks, and driving adoption of cloud-first and data-driven operating models. Currently operating in a senior leadership capacity spanning enterprise data strategy, cloud platform architecture, solution governance, and large-scale delivery leadership.",
