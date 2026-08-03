@@ -103,7 +103,6 @@ export const Navbar: React.FC = () => {
                 height={40}
                 className="w-10 h-10 object-contain rounded-md pointer-events-none"
               />
-              <p className="text-md text-[#a855f7]">A Dawdle.live Company</p>
             </div>
 
             {/* Desktop Sitemap */}

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Share2, Globe, Linkedin, Twitter } from "lucide-react";
 
 export const Footer: React.FC = () => {
-
   let currentYear = new Date().getFullYear();
 
   return (
@@ -15,10 +14,15 @@ export const Footer: React.FC = () => {
         {/* Brand Column */}
         <div className="md:col-span-5 flex flex-col items-start">
           <span className="text-xl font-extrabold font-jakarta tracking-tight text-white mb-4">
-            Campus {" "}<span className="text-[#22d3ee] font-medium">2 Corporate</span>
+            Campus{" "}
+            <span className="text-[#22d3ee] font-medium">2 Corporate</span>
+            <p className="text-[10px] text-[#a855f7] flex justify-end">
+              a Dawdle.live Company
+            </p>
           </span>
           <p className="text-sm text-[#64748b] leading-relaxed max-w-sm font-medium">
-            Bridging the gap between students and the corporate world through intensive, industry-aligned learning paths.
+            Bridging the gap between students and the corporate world through
+            intensive, industry-aligned learning paths.
           </p>
         </div>
 
@@ -52,7 +56,9 @@ export const Footer: React.FC = () => {
                 href="mailto:abdul.rehmn@coforge.com"
                 onClick={(e) => {
                   navigator.clipboard.writeText("abdul.rehmn@coforge.com");
-                  alert("Opening mail composer to connect with us! (Support email address copied to clipboard: abdul.rehmn@coforge.com)");
+                  alert(
+                    "Opening mail composer to connect with us! (Support email address copied to clipboard: abdul.rehmn@coforge.com)",
+                  );
                 }}
                 className="text-sm text-[#64748b] hover:text-[#22d3ee] transition-colors duration-300 font-semibold"
               >
@@ -108,7 +114,8 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-[#1e293b]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Copyright */}
         <p className="text-xs text-[#475569] font-medium text-center sm:text-left">
-          &copy; {currentYear} Campus to Corporate by Abhishek Kumar (CEO & Founder)
+          &copy; {currentYear} Campus to Corporate by Abhishek Kumar (CEO &
+          Founder)
         </p>
 
         {/* Live Indicator Status */}
