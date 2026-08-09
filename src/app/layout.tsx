@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -31,6 +32,7 @@ export default function RootLayout({
       className={`${outfit.variable} ${plusJakarta.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#030712] text-[#f3f4f6] selection:bg-cyan-400 selection:text-black">
+        < ServiceWorkerRegistration />
         {children}
       </body>
     </html>
