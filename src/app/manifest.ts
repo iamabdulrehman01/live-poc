@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: "My App",
-        short_name: "MyApp",
+        name: "Campus 2 Corporate",
+        short_name: "C2C",
         description: "My Progressive Web App",
         start_url: "/",
         display: "standalone",
