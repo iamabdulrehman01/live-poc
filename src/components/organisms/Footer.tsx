@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Share2, Globe, Linkedin, Twitter } from "lucide-react";
+import { Share2, Linkedin } from "lucide-react";
 
 export const Footer: React.FC = () => {
   let currentYear = new Date().getFullYear();

@@ -7,6 +7,31 @@ import FormField from "../molecules/FormField";
 import { useStore } from "@/store/useStore";
 import { registrationSteps, testimonialsData } from "@/store/db";
 
+// Local fallback list of top universities in case public API fails or has no match
+const LOCAL_FALLBACK_UNIVERSITIES = [
+  "Indian Institute of Technology Delhi (IIT Delhi)",
+  "Indian Institute of Technology Bombay (IIT Bombay)",
+  "Indian Institute of Technology Madras (IIT Madras)",
+  "Delhi University (DU)",
+  "Stanford University",
+  "Massachusetts Institute of Technology (MIT)",
+  "Harvard University",
+  "University of Oxford",
+  "University of Cambridge",
+  "California Institute of Technology (Caltech)",
+  "National University of Singapore (NUS)",
+  "Nanyang Technological University (NTU)",
+  "Birla Institute of Technology and Science (BITS Pilani)",
+  "Delhi Technological University (DTU)",
+  "Vellore Institute of Technology (VIT)",
+  "Manipal Academy of Higher Education",
+  "Amity University",
+  "SRM Institute of Science and Technology",
+  "Punjab University",
+  "Anna University",
+  "Jawaharlal Nehru University (JNU)"
+];
+
 export const RegistrationModal: React.FC = () => {
   const {
     isModalOpen,
@@ -23,7 +48,7 @@ export const RegistrationModal: React.FC = () => {
   } = useStore();
 
   const [loading, setLoading] = useState(false);
-  const [collegeSearch, setCollegeSearch] = useState("");
+  const [collegeSearch, setCollegeSearch] = useState(formData.universityName || "");
   const [colleges, setColleges] = useState<string[]>([]);
   const [isSearchingColleges, setIsSearchingColleges] = useState(false);
   const [showCollegeDropdown, setShowCollegeDropdown] = useState(false);
@@ -36,42 +61,9 @@ export const RegistrationModal: React.FC = () => {
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
   const [excelError, setExcelError] = useState<string>("");
 
-  // Local fallback list of top universities in case public API fails or has no match
-  const LOCAL_FALLBACK_UNIVERSITIES = [
-    "Indian Institute of Technology Delhi (IIT Delhi)",
-    "Indian Institute of Technology Bombay (IIT Bombay)",
-    "Indian Institute of Technology Madras (IIT Madras)",
-    "Delhi University (DU)",
-    "Stanford University",
-    "Massachusetts Institute of Technology (MIT)",
-    "Harvard University",
-    "University of Oxford",
-    "University of Cambridge",
-    "California Institute of Technology (Caltech)",
-    "National University of Singapore (NUS)",
-    "Nanyang Technological University (NTU)",
-    "Birla Institute of Technology and Science (BITS Pilani)",
-    "Delhi Technological University (DTU)",
-    "Vellore Institute of Technology (VIT)",
-    "Manipal Academy of Higher Education",
-    "Amity University",
-    "SRM Institute of Science and Technology",
-    "Punjab University",
-    "Anna University",
-    "Jawaharlal Nehru University (JNU)"
-  ];
-
-  // Initialize search input with initial universityName from store
-  useEffect(() => {
-    if (formData.universityName) {
-      setCollegeSearch(formData.universityName);
-    }
-  }, [formData.universityName]);
-
   // Handle university API search with debounce
   useEffect(() => {
     if (!collegeSearch.trim() || collegeSearch.trim().length < 3) {
-      setColleges([]);
       return;
     }
 
@@ -82,7 +74,7 @@ export const RegistrationModal: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           // Extract names and filter unique values
-          const names: string[] = Array.from(new Set(data.map((uni: any) => uni.name)));
+          const names: string[] = Array.from(new Set(data.map((uni: { name: string }) => uni.name)));
           if (names.length > 0) {
             setColleges(names);
           } else {
@@ -114,13 +106,12 @@ export const RegistrationModal: React.FC = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [collegeSearch]);
 
-  // Reset uploaded file states when modal is closed
-  useEffect(() => {
-    if (!isModalOpen) {
-      setUploadedFileName("");
-      setExcelError("");
-    }
-  }, [isModalOpen]);
+  // Helper to handle closing modal and resetting file uploads without causing synchronous effect warnings
+  const handleClose = () => {
+    setUploadedFileName("");
+    setExcelError("");
+    closeModal();
+  };
 
   // Local price mapper based on student vs college coordinator selections
   const getProgramPrice = () => {
@@ -222,7 +213,7 @@ export const RegistrationModal: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 md:p-6 bg-[#030712]/90 backdrop-blur-md">
       {/* Absolute Close Backdrop Area */}
-      <div className="absolute inset-0" onClick={closeModal} />
+      <div className="absolute inset-0" onClick={handleClose} />
 
       {/* Modal Main Frame */}
       <div className="relative w-full max-w-4xl bg-[#070b13] border border-[#1e293b] rounded-3xl overflow-hidden shadow-2xl flex flex-col z-10 animate-fade-in max-h-[90vh]">
@@ -235,7 +226,7 @@ export const RegistrationModal: React.FC = () => {
             </span>
           </div>
           <button
-            onClick={closeModal}
+            onClick={handleClose}
             className="p-1.5 rounded-xl bg-[#0d1323] border border-[#1e293b] text-[#64748b] hover:text-white hover:border-slate-700 transition-all cursor-pointer"
             aria-label="Close form"
           >
@@ -298,7 +289,7 @@ export const RegistrationModal: React.FC = () => {
               </div>
 
               {/* Form Forms Layout */}
-              <div className="w-full p-8 rounded-2xl bg-[#090d16]/80 border border-[#1e293b]/70 backdrop-blur-md mb-10">
+              <div className="w-full p-5 sm:p-8 rounded-2xl bg-[#090d16]/80 border border-[#1e293b]/70 backdrop-blur-md mb-10">
                 {/* STEP 1: Personal Details */}
                 {currentStep === 1 && (
                   <form onSubmit={handleContinue} className="flex flex-col gap-6">
@@ -431,7 +422,7 @@ export const RegistrationModal: React.FC = () => {
                           <label className="text-sm font-semibold text-[#94a3b8] tracking-wide">
                             Internship Duration:
                           </label>
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                              <button
                               type="button"
                               onClick={() => updateFormField("internshipType", "summer")}
@@ -467,7 +458,7 @@ export const RegistrationModal: React.FC = () => {
                           <label className="text-sm font-semibold text-[#94a3b8] tracking-wide">
                             Focus Area / Tech Track:
                           </label>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {["Frontend", "Backend", "DevOps", "Cloud", "AI and Agentic AI", "UI and UX"].map((track) => (
                               <button
                                 key={track}
@@ -514,7 +505,7 @@ export const RegistrationModal: React.FC = () => {
                               Price: ₹499 / Program
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {[
                               "Frontend Development",
                               "Backend Development",
@@ -556,7 +547,7 @@ export const RegistrationModal: React.FC = () => {
                               Price: ₹1,999 / Student
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {[
                               "Frontend",
                               "Backend",
@@ -589,7 +580,7 @@ export const RegistrationModal: React.FC = () => {
                           <label className="text-sm font-semibold text-[#94a3b8] tracking-wide font-jakarta">
                             Select Batch Size (Mandatory):
                           </label>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                             {["25", "50", "75", "100"].map((size) => (
                               <button
                                 key={size}
@@ -630,6 +621,9 @@ export const RegistrationModal: React.FC = () => {
                               onChange={(e) => {
                                 updateFormField("universityName", e.target.value);
                                 setCollegeSearch(e.target.value);
+                                if (e.target.value.trim().length < 3) {
+                                  setColleges([]);
+                                }
                                 setShowCollegeDropdown(true);
                               }}
                               onFocus={() => setShowCollegeDropdown(true)}
@@ -692,7 +686,7 @@ export const RegistrationModal: React.FC = () => {
 
                     {/* Finalized Amount Banner */}
                     {(formData.userType === "student" || formData.userType === "university" || formData.userType === "mentorship") && (
-                      <div className="p-4 rounded-xl bg-slate-950/60 border border-[#1e293b] flex items-center justify-between mt-4 mb-2 font-jakarta">
+                      <div className="p-4 rounded-xl bg-slate-950/60 border border-[#1e293b] flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4 mb-2 font-jakarta">
                         <div className="flex flex-col text-left">
                           <span className="text-[10px] text-[#64748b] font-bold uppercase tracking-wider">Finalized Amount</span>
                           <span className="text-xs text-[#cbd5e1] mt-0.5 animate-fade-in">
@@ -709,7 +703,7 @@ export const RegistrationModal: React.FC = () => {
                             )}
                           </span>
                         </div>
-                        <div className="text-right">
+                        <div className="text-left sm:text-right">
                           <span className="text-lg font-extrabold text-[#22d3ee] animate-fade-in">
                             {getProgramPrice() > 0 ? `₹${getProgramPrice().toLocaleString("en-IN")}` : "—"}
                           </span>
@@ -717,12 +711,12 @@ export const RegistrationModal: React.FC = () => {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-4 mt-2">
-                      <Button type="button" variant="secondary" onClick={prevStep} className="justify-center gap-2">
+                    <div className="flex flex-col-reverse sm:grid sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
+                      <Button type="button" variant="secondary" onClick={prevStep} className="w-full justify-center gap-2">
                         <ArrowLeft size={16} />
                         <span>Back</span>
                       </Button>
-                      <Button type="submit" variant="glow-teal" className="justify-center gap-2">
+                      <Button type="submit" variant="glow-teal" className="w-full justify-center gap-2">
                         <span>Continue</span>
                         <ArrowRight size={16} />
                       </Button>
@@ -742,32 +736,32 @@ export const RegistrationModal: React.FC = () => {
 
                     {/* Summary Info list */}
                     <div className="p-5 rounded-2xl bg-[#030712] border border-[#1e293b] flex flex-col gap-4">
-                      <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
+                      <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2 border-b border-[#1e293b]/40 pb-3">
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Full Name:</span>
-                        <span className="text-sm font-semibold text-white col-span-2">{formData.fullName}</span>
+                        <span className="text-sm font-semibold text-white sm:col-span-2">{formData.fullName}</span>
                       </div>
-                      <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
+                      <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2 border-b border-[#1e293b]/40 pb-3">
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Email:</span>
-                        <span className="text-sm font-semibold text-white col-span-2">{formData.email}</span>
+                        <span className="text-sm font-semibold text-white sm:col-span-2 break-all">{formData.email}</span>
                       </div>
-                      <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
+                      <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2 border-b border-[#1e293b]/40 pb-3">
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">University:</span>
-                        <span className="text-sm font-semibold text-white col-span-2">{formData.universityName}</span>
+                        <span className="text-sm font-semibold text-white sm:col-span-2">{formData.universityName}</span>
                       </div>
-                      <div className="grid grid-cols-3 gap-2 border-b border-[#1e293b]/40 pb-3">
+                      <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2 border-b border-[#1e293b]/40 pb-3">
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">College:</span>
-                        <span className="text-sm font-semibold text-white col-span-2">{formData.collegeName}</span>
+                        <span className="text-sm font-semibold text-white sm:col-span-2">{formData.collegeName}</span>
                       </div>
-                      <div className={`grid grid-cols-3 gap-2 ${formData.userType === "university" && formData.batchSize ? "border-b border-[#1e293b]/40 pb-3" : ""}`}>
+                      <div className={`flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2 ${formData.userType === "university" && formData.batchSize ? "border-b border-[#1e293b]/40 pb-3" : ""}`}>
                         <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Selected Program:</span>
-                        <span className="text-sm font-bold text-[#22d3ee] col-span-2 uppercase tracking-wide">
+                        <span className="text-sm font-bold text-[#22d3ee] sm:col-span-2 uppercase tracking-wide">
                           {formData.selectedProgram}
                         </span>
                       </div>
                       {formData.userType === "university" && formData.batchSize && (
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2">
                           <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider">Batch Size:</span>
-                          <span className="text-sm font-semibold text-white col-span-2">{formData.batchSize} Students</span>
+                          <span className="text-sm font-semibold text-white sm:col-span-2">{formData.batchSize} Students</span>
                         </div>
                       )}
                     </div>
@@ -831,13 +825,13 @@ export const RegistrationModal: React.FC = () => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mt-2">
+                    <div className="flex flex-col-reverse sm:grid sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
                       <Button
                         type="button"
                         variant="secondary"
                         disabled={loading}
                         onClick={prevStep}
-                        className="justify-center gap-2"
+                        className="w-full justify-center gap-2"
                       >
                         <ArrowLeft size={16} />
                         <span>Back</span>
@@ -846,7 +840,7 @@ export const RegistrationModal: React.FC = () => {
                         type="submit"
                         variant="glow-teal"
                         disabled={loading}
-                        className="justify-center gap-2 bg-[#22d3ee]"
+                        className="w-full justify-center gap-2 bg-[#22d3ee]"
                       >
                         {loading ? (
                           <>
@@ -875,12 +869,12 @@ export const RegistrationModal: React.FC = () => {
                     </div>
 
                     <div className="p-5 rounded-2xl bg-[#030712] border border-[#1e293b] flex flex-col gap-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4">
                         <div>
                           <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider block font-jakarta">Order ID</span>
-                          <span className="text-sm font-semibold text-white font-mono">{orderId}</span>
+                          <span className="text-sm font-semibold text-white font-mono break-all">{orderId}</span>
                         </div>
-                        <div className="text-right">
+                        <div className="text-left sm:text-right">
                           <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider block font-jakarta">Amount Due</span>
                           <span className="text-lg font-bold text-[#22d3ee] font-jakarta">₹{amount.toLocaleString("en-IN")}</span>
                         </div>
@@ -968,7 +962,7 @@ export const RegistrationModal: React.FC = () => {
               <p className="text-sm text-[#94a3b8] leading-relaxed mt-4">
                 Thank you for applying to Campus to Corporate. We have saved your registration parameters. An expert advisor will reach out to <span className="text-[#22d3ee] font-semibold">{formData.email}</span> shortly.
               </p>
-              <Button variant="secondary" onClick={closeModal} className="mt-10 px-8 py-3 font-semibold text-sm">
+              <Button variant="secondary" onClick={handleClose} className="mt-10 px-8 py-3 font-semibold text-sm">
                 Close Window
               </Button>
             </div>
@@ -987,7 +981,7 @@ export const RegistrationModal: React.FC = () => {
                     className="p-5 rounded-2xl bg-[#090d16]/30 border border-[#1e293b]/50 backdrop-blur-sm flex flex-col justify-between"
                   >
                     <p className="text-xs text-[#94a3b8] italic leading-relaxed mb-4">
-                      "{test.quote}"
+                      &ldquo;{test.quote}&rdquo;
                     </p>
                     <div className="flex items-center gap-3">
                       <div className="h-8 w-8 rounded-full bg-slate-800 border border-cyan-500/20 flex items-center justify-center text-[10px] text-cyan-400 font-bold">
