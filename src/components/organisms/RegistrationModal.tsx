@@ -308,7 +308,7 @@ export const RegistrationModal: React.FC = () => {
           </div>
 
           <button
-            onClick={handleClose}
+            onClick={closeModal}
             className="p-1.5 rounded-xl bg-[#0d1323] border border-[#1e293b] text-[#64748b] hover:text-white hover:border-slate-700 transition-all cursor-pointer"
             aria-label="Close form"
           >
