@@ -175,10 +175,3 @@ export const registrationSteps: RegistrationStep[] = [
   { number: 3, title: "Review" },
   { number: 4, title: "Payment" },
 ];
-
-export const founderInfo = {
-  name: "Rishikesh Kumar",
-  role: "Founder",
-  bio: "Campus to Corporate is a dedicated C2C (Campus to Corporate) platform committed to empowering students and young professionals. Our mission is to bridge the educational gap by providing practical, industry-aligned training that turns academic knowledge into corporate performance.\n\nFounded on the principle of 'Informed Momentum,' we combine established institutional stability with the agility of high-tech startups.",
-  avatarUrl: "/images/founder.jpg",
-};
