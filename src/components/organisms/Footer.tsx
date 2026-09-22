@@ -16,9 +16,6 @@ export const Footer: React.FC = () => {
           <span className="text-xl font-extrabold font-jakarta tracking-tight text-white mb-4">
             Campus{" "}
             <span className="text-[#22d3ee] font-medium">2 Corporate</span>
-            <p className="text-[10px] text-[#a855f7] flex justify-end">
-              a Dawdle.live Company
-            </p>
           </span>
           <p className="text-sm text-[#64748b] leading-relaxed max-w-sm font-medium">
             Bridging the gap between students and the corporate world through
