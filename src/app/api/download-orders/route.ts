@@ -23,7 +23,7 @@ export async function GET() {
     ];
 
     // Helper to escape values for CSV
-    const escapeCsv = (val: any) => {
+    const escapeCsv = (val: unknown) => {
       const str = String(val || "").replace(/"/g, '""');
       return str.includes(",") || str.includes("\n") || str.includes('"') ? `"${str}"` : str;
     };

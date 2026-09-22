@@ -308,7 +308,7 @@ export const RegistrationModal: React.FC = () => {
           </div>
 
           <button
-            onClick={closeModal}
+            onClick={handleClose}
             className="p-1.5 rounded-xl bg-[#0d1323] border border-[#1e293b] text-[#64748b] hover:text-white hover:border-slate-700 transition-all cursor-pointer"
             aria-label="Close form"
           >
@@ -1196,7 +1196,7 @@ export const RegistrationModal: React.FC = () => {
                         variant="secondary"
                         disabled={loading}
                         onClick={prevStep}
-                        className="justify-center gap-2"
+                        className="w-full justify-center gap-2"
                       >
                         <ArrowLeft size={16} />
                         <span>Back</span>
@@ -1206,7 +1206,7 @@ export const RegistrationModal: React.FC = () => {
                         type="submit"
                         variant="glow-teal"
                         disabled={loading}
-                        className="justify-center gap-2 bg-[#22d3ee]"
+                        className="w-full justify-center gap-2 bg-[#22d3ee]"
                       >
                         {loading ? (
                           <>
@@ -1243,7 +1243,7 @@ export const RegistrationModal: React.FC = () => {
 
                     {/* Order Info */}
                     <div className="p-5 rounded-2xl bg-[#030712] border border-[#1e293b] flex flex-col gap-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4">
                         <div>
                           <span className="text-xs text-[#64748b] font-bold uppercase tracking-wider block font-jakarta">
                             Order ID
@@ -1410,7 +1410,7 @@ export const RegistrationModal: React.FC = () => {
                     className="p-5 rounded-2xl bg-[#090d16]/30 border border-[#1e293b]/50 backdrop-blur-sm flex flex-col justify-between"
                   >
                     <p className="text-xs text-[#94a3b8] italic leading-relaxed mb-4">
-                      "{test.quote}"
+                      &ldquo;{test.quote}&rdquo;
                     </p>
 
                     <div className="flex items-center gap-3">

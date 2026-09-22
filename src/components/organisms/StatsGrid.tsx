@@ -2,12 +2,9 @@
 
 import React from "react";
 import StatsCard from "../molecules/StatsCard";
-import Button from "../atoms/Button";
 import { dashboardStats } from "@/store/db";
-import { useStore } from "@/store/useStore";
 
 export const StatsGrid: React.FC = () => {
-  const openModal = useStore((state) => state.openModal);
 
   return (
     <section className="relative py-12 md:py-20 bg-[#030712]">

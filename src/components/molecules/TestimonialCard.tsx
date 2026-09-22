@@ -40,7 +40,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
       <div className="relative z-10">
         {/* Quote Content */}
         <p className="text-lg md:text-xl text-[#e2e8f0] font-medium leading-relaxed italic mb-8">
-          "{quote}"
+          &ldquo;{quote}&rdquo;
         </p>
       </div>
 

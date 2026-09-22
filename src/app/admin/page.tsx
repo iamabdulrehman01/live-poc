@@ -50,7 +50,10 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (isAuthorized) {
-      fetchOrders();
+      const timer = setTimeout(() => {
+        fetchOrders();
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [isAuthorized]);
 
